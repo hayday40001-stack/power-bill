@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#6437c9">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>คำนวณค่าไฟล่วงหน้า PEA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:#f5f4fb;
+    --surface:#ffffff;
+    --surface-2:#efedf9;
+    --ink:#1d1a2e;
+    --muted:#6c688a;
+    --faint:#918da8;
+    --border:#e4e0f2;
+    --border-strong:#d4cdec;
+    --accent:#6437c9;
+    --accent-ink:#4d27a6;
+    --accent-soft:#ece4fb;
+    --accent-line:#d8c9f6;
+    --warn:#c2691a;
+    --warn-soft:#fbedd8;
+    --good:#0e8a5f;
+    --good-soft:#d9f2e6;
+    --danger:#cf2f4a;
+    --shadow:0 1px 2px rgba(29,26,46,.04),0 8px 24px -14px rgba(29,26,46,.18);
+    --shadow-lift:0 2px 6px rgba(29,26,46,.06),0 20px 40px -20px rgba(80,50,180,.30);
+    --r:16px;
+    --r-sm:10px;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme:dark){
+      --bg:#131120;
+      --surface:#1c192b;
+      --surface-2:#262138;
+      --ink:#edeafa;
+      --muted:#a49fc0;
+      --faint:#7f7a9c;
+      --border:#302a46;
+      --border-strong:#3d3658;
+      --accent:#a98cf7;
+      --accent-ink:#c3adff;
+      --accent-soft:#291f45;
+      --accent-line:#4a3a72;
+      --warn:#f0ad55;
+      --warn-soft:#3a2c17;
+      --good:#37cf93;
+      --good-soft:#153427;
+      --danger:#ff6d84;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.7);
+      --shadow-lift:0 2px 8px rgba(0,0,0,.4),0 24px 50px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#131120;
+    --surface:#1c192b;
+    --surface-2:#262138;
+    --ink:#edeafa;
+    --muted:#a49fc0;
+    --faint:#7f7a9c;
+    --border:#302a46;
+    --border-strong:#3d3658;
+    --accent:#a98cf7;
+    --accent-ink:#c3adff;
+    --accent-soft:#291f45;
+    --accent-line:#4a3a72;
+    --warn:#f0ad55;
+    --warn-soft:#3a2c17;
+    --good:#37cf93;
+    --good-soft:#153427;
+    --danger:#ff6d84;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.7);
+    --shadow-lift:0 2px 8px rgba(0,0,0,.4),0 24px 50px -22px rgba(0,0,0,.8);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:0;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:22px 16px 72px}
+  h1,h2,h3{font-family:'Kanit','IBM Plex Sans Thai',sans-serif;margin:0;line-height:1.2;text-wrap:balance;font-weight:600}
+  .num{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  /* header */
+  header{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+  .logo{
+    width:46px;height:46px;flex:none;border-radius:13px;
+    background:linear-gradient(150deg,var(--accent),#8b5cf6);
+    display:grid;place-items:center;box-shadow:var(--shadow-lift)}
+  .logo svg{width:26px;height:26px}
+  header .tt h1{font-size:1.32rem;letter-spacing:-.01em}
+  header .tt p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+  .theme-btn{margin-left:auto;flex:none;border:1px solid var(--border);background:var(--surface);color:var(--muted);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;display:grid;place-items:center;font-size:1.05rem}
+  .theme-btn:hover{border-color:var(--border-strong);color:var(--ink)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+  .card > .card-h{display:flex;align-items:baseline;gap:9px;margin:-2px 0 14px}
+  .card-h h2{font-size:1.02rem}
+  .card-h .sub{color:var(--faint);font-size:.78rem;margin-left:auto;font-weight:500}
+
+  .eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink)}
+
+  /* example banner */
+  .banner{display:flex;gap:10px;align-items:center;background:var(--accent-soft);border:1px solid var(--accent-line);
+    color:var(--accent-ink);border-radius:12px;padding:10px 13px;margin-bottom:16px;font-size:.85rem}
+  .banner b{font-weight:600}
+  .banner button{margin-left:auto;flex:none;border:1px solid var(--accent-line);background:transparent;color:var(--accent-ink);
+    font-family:inherit;font-size:.8rem;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .banner button:hover{background:rgba(255,255,255,.4)}
+  :root[data-theme="dark"] .banner button:hover,:root:not([data-theme="light"]) .banner button:hover{background:rgba(255,255,255,.06)}
+
+  /* hero tiles */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .tile{border-radius:14px;padding:15px 15px 16px;border:1px solid var(--border);position:relative;overflow:hidden}
+  .tile .lab{font-size:.79rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .tile .lab .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .tile .big{font-size:2.15rem;font-weight:700;letter-spacing:-.02em;margin-top:6px;line-height:1}
+  .tile .big .cur{font-size:1.05rem;font-weight:600;color:var(--muted);margin-right:2px}
+  .tile .meta{font-size:.78rem;color:var(--muted);margin-top:7px}
+  .tile.now{background:var(--surface-2)}
+  .tile.now .dot{background:var(--good)}
+  .tile.fc{background:linear-gradient(160deg,var(--warn-soft),var(--surface));border-color:var(--warn-soft)}
+  .tile.fc .dot{background:var(--warn)}
+  .tile.fc .big{color:var(--ink)}
+
+  .progress{margin-top:15px}
+  .progress .pbar{height:9px;border-radius:6px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+  .progress .pfill{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6);border-radius:6px;transition:width .4s}
+  .progress .pmeta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:7px}
+  .progress .pmeta b{color:var(--ink);font-weight:600}
+
+  /* inputs */
+  .field{margin-bottom:13px}
+  .field:last-child{margin-bottom:0}
+  label.fl{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  label.fl small{font-weight:400;color:var(--faint)}
+  input[type=text],input[type=number],input[type=date],select{
+    width:100%;font-family:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--border-strong);
+    border-radius:var(--r-sm);background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none}
+  input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .num-in{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .row2 .field{margin-bottom:0}
+
+  .btn{font-family:'Kanit',sans-serif;font-weight:600;font-size:.92rem;border:none;border-radius:var(--r-sm);
+    padding:11px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 16px -8px var(--accent)}
+  .btn-primary:hover{background:var(--accent-ink)}
+  .btn-ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--border-strong)}
+  .btn-block{width:100%}
+  .btn-row{display:flex;gap:10px;margin-top:14px}
+  .btn-row .btn{flex:1}
+
+  .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+  .seg button{font-family:inherit;font-weight:600;font-size:.82rem;border:none;background:transparent;color:var(--muted);
+    padding:6px 13px;border-radius:8px;cursor:pointer}
+  .seg button.on{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow)}
+
+  .cycle-info{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.83rem;color:var(--muted);margin-top:2px}
+  .cycle-info b{color:var(--ink);font-weight:600}
+
+  /* breakdown table */
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:600;border-bottom:1px solid var(--border-strong)}
+  tbody td{font-variant-numeric:tabular-nums}
+  tbody td.amt{font-family:'Kanit',sans-serif;font-weight:500}
+  tr.sum td{border-top:1.5px solid var(--border-strong);border-bottom:none;padding-top:11px;font-weight:600}
+  tr.total td{font-family:'Kanit',sans-serif;font-size:1.05rem;font-weight:700;color:var(--accent-ink);border-bottom:none}
+  tr.total td:first-child{color:var(--ink)}
+  .tier-hi td{background:var(--accent-soft)}
+  .muted-row td{color:var(--faint)}
+
+  /* meter log */
+  .log-add{display:grid;grid-template-columns:1.1fr 1fr auto;gap:9px;align-items:end}
+  .log-add .btn{padding:10px 14px}
+  .loglist{margin-top:6px}
+  .logrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--border)}
+  .logrow:last-child{border-bottom:none}
+  .logrow .d{font-size:.82rem;color:var(--muted);font-weight:500}
+  .logrow .rd{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;font-weight:500}
+  .logrow .rd small{color:var(--faint);font-weight:400;font-family:'IBM Plex Sans Thai'}
+  .logrow .delta{font-size:.82rem;text-align:right}
+  .logrow .delta b{font-family:'Kanit',sans-serif;color:var(--accent-ink);font-weight:600}
+  .logrow .x{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:1.1rem;padding:2px 4px;line-height:1}
+  .logrow .x:hover{color:var(--danger)}
+  .empty{color:var(--faint);font-size:.86rem;text-align:center;padding:18px 0}
+
+  .hist-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:.86rem}
+  .hist-item:last-child{border-bottom:none}
+  .hist-item .hd{color:var(--muted)}
+  .hist-item .hu{margin-left:auto;color:var(--muted)}
+  .hist-item .ht{font-family:'Kanit',sans-serif;font-weight:600;color:var(--ink);min-width:92px;text-align:right}
+
+  /* settings */
+  details.settings{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+  details.settings > summary{list-style:none;cursor:pointer;padding:15px 18px;font-family:'Kanit',sans-serif;font-weight:600;display:flex;align-items:center;gap:9px}
+  details.settings > summary::-webkit-details-marker{display:none}
+  details.settings > summary .chev{margin-left:auto;color:var(--faint);transition:transform .2s}
+  details.settings[open] > summary .chev{transform:rotate(180deg)}
+  .settings-body{padding:2px 18px 18px;border-top:1px solid var(--border)}
+  .setgroup{margin-top:16px}
+  .setgroup h3{font-size:.9rem;margin-bottom:9px;color:var(--ink)}
+  .ftbox{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:12px;padding:13px 14px}
+  .ftbox .ftlab{font-size:.78rem;color:var(--accent-ink);font-weight:600}
+  .ftbox .ftperiod{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  .ftbox a{color:var(--accent-ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--accent-line)}
+  .tier-edit{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:7px;font-size:.85rem}
+  .tier-edit .tlab{color:var(--muted);font-variant-numeric:tabular-nums}
+  .tier-edit input{padding:7px 9px;font-size:.88rem}
+  .hint{font-size:.78rem;color:var(--faint);margin-top:4px;line-height:1.5}
+  .src{font-size:.75rem;color:var(--faint);margin-top:22px;text-align:center;line-height:1.7}
+  .src a{color:var(--muted)}
+  .foot-reset{display:flex;justify-content:center;margin-top:14px}
+  .foot-reset button{background:none;border:none;color:var(--faint);font-family:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+  .foot-reset button:hover{color:var(--danger)}
+
+  @media(max-width:520px){
+    .tile .big{font-size:1.85rem}
+    .log-add{grid-template-columns:1fr 1fr;}
+    .log-add .btn{grid-column:1/-1}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#fff"/></svg>
+    </div>
+    <div class="tt">
+      <h1>คำนวณค่าไฟล่วงหน้า</h1>
+      <p>จดเลขมิเตอร์ · ประมาณค่าไฟทั้งเดือน · อัตรา PEA บ้านอยู่อาศัยจริง</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="สลับธีมสว่าง/มืด" aria-label="สลับธีม">◐</button>
+  </header>
+
+  <div class="banner" id="exBanner" hidden>
+    <span>🔆 <b>กำลังแสดงข้อมูลตัวอย่าง</b> — กด “เริ่มรอบใหม่” แล้วใส่เลขมิเตอร์ของคุณเพื่อเริ่มใช้จริง</span>
+    <button id="clearEx">ล้างตัวอย่าง</button>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="card">
+    <div class="tiles">
+      <div class="tile now">
+        <div class="lab"><span class="dot"></span>ค่าไฟ ณ ปัจจุบัน</div>
+        <div class="big num"><span class="cur">฿</span><span id="nowCost">0</span></div>
+        <div class="meta" id="nowMeta">ใช้ไป 0 หน่วย</div>
+      </div>
+      <div class="tile fc">
+        <div class="lab"><span class="dot"></span>ประมาณการทั้งเดือน</div>
+        <div class="big num"><span class="cur">฿</span><span id="fcCost">0</span></div>
+        <div class="meta" id="fcMeta">คาดใช้ 0 หน่วย</div>
+      </div>
+    </div>
+    <div class="progress">
+      <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+      <div class="pmeta">
+        <span>ผ่านไป <b id="daysElapsed">0</b> วัน จาก <b id="cycleDaysLbl">30</b></span>
+        <span>เฉลี่ย <b class="num" id="avgDay">0</b> ฿/วัน · <b class="num" id="avgUnit">0</b> หน่วย/วัน</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="card">
+    <div class="card-h">
+      <h2>บันทึกการใช้งาน</h2>
+      <span class="sub" id="modeSubtitle"></span>
+    </div>
+
+    <div class="field">
+      <div class="seg" id="modeSeg" role="tablist">
+        <button data-mode="meter" class="on">จากเลขมิเตอร์</button>
+        <button data-mode="units">ป้อนหน่วยเอง</button>
+      </div>
+    </div>
+
+    <!-- meter mode -->
+    <div id="meterMode">
+      <div class="cycle-info" id="cycleInfo"></div>
+      <div class="field" style="margin-top:12px">
+        <label class="fl">เลขมิเตอร์ล่าสุดวันนี้ <small>(อ่านจากหน้ามิเตอร์)</small></label>
+        <input type="number" inputmode="decimal" class="num-in" id="curReading" placeholder="เช่น 45398">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="fl">วันที่อ่าน</label>
+          <input type="date" id="curDate">
+        </div>
+        <div class="field" style="display:flex;align-items:end">
+          <button class="btn btn-primary btn-block" id="addReading">＋ บันทึกค่ามิเตอร์</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- units mode -->
+    <div id="unitsMode" hidden>
+      <div class="row2">
+        <div class="field">
+          <label class="fl">ใช้ไปแล้ว (หน่วย)</label>
+          <input type="number" inputmode="decimal" class="num-in" id="uUnits" placeholder="เช่น 188">
+        </div>
+        <div class="field">
+          <label class="fl">ผ่านไปแล้ว (วัน)</label>
+          <input type="number" inputmode="decimal" class="num-in" id="uDays" placeholder="เช่น 9">
+        </div>
+      </div>
+      <div class="hint">ประมาณการทั้งเดือนจะคิดจาก หน่วยที่ใช้ ÷ จำนวนวัน × <span id="uCycleDays">30</span> วัน</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="newCycle">↻ เริ่มรอบใหม่</button>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="card">
+    <div class="card-h">
+      <h2>รายละเอียดการคิดเงิน</h2>
+      <div class="seg" id="bdSeg" style="margin-left:auto">
+        <button data-bd="fc" class="on">ทั้งเดือน</button>
+        <button data-bd="now">ปัจจุบัน</button>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+      <table id="bdTable">
+        <thead>
+          <tr><th>ขั้นการใช้ไฟ</th><th>หน่วย</th><th>บาท/หน่วย</th><th>เป็นเงิน</th></tr>
+        </thead>
+        <tbody id="bdBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- METER LOG -->
+  <div class="card">
+    <div class="card-h">
+      <h2>ประวัติเลขมิเตอร์</h2>
+      <span class="sub">รอบปัจจุบัน</span>
+    </div>
+    <div class="loglist" id="logList"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="card" id="histCard" hidden>
+    <div class="card-h"><h2>รอบบิลที่ผ่านมา</h2></div>
+    <div id="histList"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <details class="settings" id="settings">
+    <summary>⚙️ ตั้งค่าอัตราค่าไฟ &amp; ค่า Ft <span class="chev">⌄</span></summary>
+    <div class="settings-body">
+
+      <div class="setgroup">
+        <h3>ประเภทผู้ใช้ไฟ (PEA บ้านอยู่อาศัย)</h3>
+        <select id="meterType">
+          <option value="111">1.1.1 — มิเตอร์ไม่เกิน 5 แอมป์ (ใช้ไฟน้อย)</option>
+          <option value="112">1.1.2 — มิเตอร์เกิน 5 แอมป์ (ใช้ไฟมาก)</option>
+        </select>
+        <div class="hint">โครงสร้างใหม่เริ่มรอบบิลเดือน ก.ย. 2569 — เปลี่ยนประเภทแล้วอัตราขั้นบันไดจะรีเซ็ตเป็นค่ามาตรฐานของประเภทนั้น</div>
+      </div>
+
+      <div class="setgroup">
+        <h3>ค่า Ft (ค่าไฟผันแปร)</h3>
+        <div class="ftbox">
+          <label class="ftlab">Ft (บาท/หน่วย)</label>
+          <input type="number" step="0.0001" class="num-in" id="ftRate" style="margin-top:6px">
+          <div class="ftperiod" id="ftPeriodTxt"></div>
+          <div class="ftperiod">อัปเดตอัตโนมัติจากเว็บไม่สามารถทำได้ในแอปที่เก็บข้อมูลในเครื่อง (เบราว์เซอร์บล็อกด้วยเหตุผลความปลอดภัย) — กดปุ่มด้านล่างเพื่อเปิดหน้าประกาศทางการ แล้วกรอกค่าล่าสุด แอปจะจำค่าไว้ให้</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn btn-ghost" style="font-size:.82rem;padding:8px 12px;text-decoration:none" href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">↗ ดูค่า Ft ล่าสุด (กกพ.)</a>
+            <a class="btn btn-ghost" style="font-size:.82rem;padding:8px 12px;text-decoration:none" href="https://www.pea.co.th/our-services/tariff/ft" target="_blank" rel="noopener">↗ PEA</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="setgroup">
+        <h3>อัตราค่าพลังงานแบบขั้นบันได</h3>
+        <div id="tierEdit"></div>
+        <div class="hint">แต่ละแถวคือ “คิดหน่วยที่ …ถึง… ในราคาบาท/หน่วยนี้”</div>
+      </div>
+
+      <div class="setgroup">
+        <div class="row2">
+          <div class="field">
+            <label class="fl">ค่าบริการรายเดือน (บาท)</label>
+            <input type="number" step="0.01" class="num-in" id="serviceCharge">
+          </div>
+          <div class="field">
+            <label class="fl">VAT (%)</label>
+            <input type="number" step="0.1" class="num-in" id="vatRate">
+          </div>
+        </div>
+        <div class="field" style="margin-top:11px">
+          <label class="fl">จำนวนวันต่อรอบบิล</label>
+          <input type="number" class="num-in" id="cycleDays">
+        </div>
+      </div>
+
+      <div class="foot-reset">
+        <button id="resetAll">ล้างข้อมูลทั้งหมด แล้วเริ่มต้นใหม่</button>
+      </div>
+    </div>
+  </details>
+
+  <div class="src">
+    อัตราอ้างอิง: PEA บ้านอยู่อาศัย โครงสร้างใหม่ ก.ย. 2569 · ค่า Ft งวด ก.ย.–ธ.ค. 2569 = 0.1623 บาท/หน่วย · VAT 7%<br>
+    ที่มา:
+    <a href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">กกพ. (ERC)</a> ·
+    <a href="https://www.pea.co.th/our-services/tariff/ft" target="_blank" rel="noopener">PEA</a>
+    — เป็นเครื่องมือประมาณการ ค่าจริงยึดตามใบแจ้งค่าไฟ
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="peaBillApp_v1";
+  var $=function(s){return document.querySelector(s)};
+
+  var DEFAULT_TIERS={
+    "111":[
+      {upTo:15,  rate:2.3488},
+      {upTo:25,  rate:2.9882},
+      {upTo:200, rate:3.0000},
+      {upTo:400, rate:4.1584},
+      {upTo:null,rate:4.3583}
+    ],
+    "112":[
+      {upTo:200, rate:3.0000},
+      {upTo:400, rate:4.1584},
+      {upTo:null,rate:4.3583}
+    ]
+  };
+  var DEFAULT_SERVICE={"111":8.19,"112":38.22};
+
+  function todayStr(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+  function daysBetween(a,b){var A=new Date(a+"T00:00:00"),B=new Date(b+"T00:00:00");return Math.round((B-A)/86400000)}
+  function addDays(s,n){var d=new Date(s+"T00:00:00");d.setDate(d.getDate()+n);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+
+  var THMON=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  function fmtDate(s){if(!s)return"-";var d=new Date(s+"T00:00:00");return d.getDate()+" "+THMON[d.getMonth()]+" "+(d.getFullYear()+543-2500)}
+  function money(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function u(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{maximumFractionDigits:1})}
+
+  // ---- default seed (example) ----
+  function seed(){
+    var start=addDays(todayStr(),-9);
+    return {
+      example:true,
+      mode:"meter",
+      meterType:"112",
+      tiers:JSON.parse(JSON.stringify(DEFAULT_TIERS["112"])),
+      serviceCharge:38.22,
+      ft:0.1623,
+      vat:7,
+      cycleDays:30,
+      cycleStart:start,
+      startReading:45210,
+      readings:[
+        {date:addDays(start,4),reading:45301},
+        {date:todayStr(),reading:45398}
+      ],
+      history:[],
+      manual:{units:188,days:9}
+    };
+  }
+
+  var state=load();
+  function load(){
+    try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.tiers)return s;}catch(e){}
+    return seed();
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+  // ---- bill math ----
+  function computeEnergy(units,tiers){
+    var prev=0,sum=0,rows=[];
+    for(var i=0;i<tiers.length;i++){
+      var cap=(tiers[i].upTo==null)?Infinity:tiers[i].upTo;
+      var inTier=Math.max(0,Math.min(units,cap)-prev);
+      var amt=inTier*tiers[i].rate;
+      rows.push({from:prev,to:cap,units:inTier,rate:tiers[i].rate,amount:amt,active:inTier>0});
+      sum+=amt;prev=cap;
+      if(units<=cap)break;
+    }
+    return {sum:sum,rows:rows};
+  }
+  function computeBill(units){
+    units=Math.max(0,units||0);
+    var e=computeEnergy(units,state.tiers);
+    var ftCharge=units*state.ft;
+    var base=e.sum+ftCharge+state.serviceCharge;
+    var vat=base*(state.vat/100);
+    return {units:units,energy:e.sum,rows:e.rows,ft:ftCharge,service:state.serviceCharge,base:base,vat:vat,total:base+vat};
+  }
+
+  // ---- derive current usage ----
+  function derive(){
+    if(state.mode==="units"){
+      var un=+state.manual.units||0, dd=Math.max(1,+state.manual.days||1);
+      var proj=un/dd*state.cycleDays;
+      return {unitsNow:un,days:dd,unitsProj:proj,valid:un>0};
+    }
+    var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
+    var last=rs.length?rs[rs.length-1]:null;
+    var curReading=last?last.reading:state.startReading;
+    var curDate=last?last.date:state.cycleStart;
+    var unitsNow=Math.max(0,curReading-state.startReading);
+    var days=Math.max(1,daysBetween(state.cycleStart,curDate)||1);
+    var proj=unitsNow/days*state.cycleDays;
+    return {unitsNow:unitsNow,days:days,unitsProj:proj,valid:unitsNow>0,curReading:curReading,curDate:curDate};
+  }
+
+  var bdView="fc";
+
+  function render(){
+    var d=derive();
+    var nowBill=computeBill(d.unitsNow);
+    var fcBill=computeBill(d.unitsProj);
+
+    $("#nowCost").textContent=money(nowBill.total);
+    $("#nowMeta").textContent="ใช้ไป "+u(d.unitsNow)+" หน่วย";
+    $("#fcCost").textContent=money(fcBill.total);
+    $("#fcMeta").textContent="คาดใช้ "+u(d.unitsProj)+" หน่วย/เดือน";
+
+    var pct=Math.max(0,Math.min(100,d.days/state.cycleDays*100));
+    $("#pfill").style.width=pct+"%";
+    $("#daysElapsed").textContent=d.days;
+    $("#cycleDaysLbl").textContent=state.cycleDays;
+    $("#avgDay").textContent=money(nowBill.total/d.days);
+    $("#avgUnit").textContent=u(d.unitsNow/d.days);
+
+    // cycle info
+    var ci=$("#cycleInfo");
+    if(state.mode==="meter"){
+      ci.innerHTML="เริ่มรอบ <b>"+fmtDate(state.cycleStart)+"</b> · เลขตั้งต้น <b class='num'>"+u(state.startReading)+"</b>";
+    }else{ci.innerHTML="";}
+
+    // breakdown
+    var bill=bdView==="fc"?fcBill:nowBill;
+    var body=$("#bdBody");body.innerHTML="";
+    bill.rows.forEach(function(r){
+      var tr=document.createElement("tr");
+      if(r.active)tr.className="tier-hi";else tr.className="muted-row";
+      var range=(r.to===Infinity)?("เกิน "+r.from):((r.from)+"–"+r.to);
+      tr.innerHTML="<td>หน่วยที่ "+range+"</td><td>"+u(r.units)+"</td><td>"+r.rate.toFixed(4)+"</td><td class='amt'>"+money(r.amount)+"</td>";
+      body.appendChild(tr);
+    });
+    function addRow(cls,label,val){var tr=document.createElement("tr");tr.className=cls;tr.innerHTML="<td>"+label+"</td><td></td><td></td><td class='amt'>"+val+"</td>";body.appendChild(tr);}
+    addRow("sum","ค่าพลังงานไฟฟ้า","฿ "+money(bill.energy));
+    addRow("","ค่า Ft ("+u(bill.units)+" × "+state.ft.toFixed(4)+")","฿ "+money(bill.ft));
+    addRow("","ค่าบริการรายเดือน","฿ "+money(bill.service));
+    addRow("sum","รวมก่อน VAT","฿ "+money(bill.base));
+    addRow("","VAT "+state.vat+"%","฿ "+money(bill.vat));
+    addRow("total","รวมทั้งสิ้น","฿ "+money(bill.total));
+
+    // meter log
+    var ll=$("#logList");ll.innerHTML="";
+    if(state.mode==="units"){
+      ll.innerHTML="<div class='empty'>อยู่ในโหมดป้อนหน่วยเอง — สลับไป “จากเลขมิเตอร์” เพื่อบันทึกประวัติ</div>";
+    }else{
+      var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
+      // start marker
+      var s0=document.createElement("div");s0.className="logrow";
+      s0.innerHTML="<span class='d'>"+fmtDate(state.cycleStart)+"</span><span class='rd'>"+u(state.startReading)+" <small>เริ่มรอบ</small></span><span class='delta'></span><span></span>";
+      ll.appendChild(s0);
+      var prev=state.startReading,prevDate=state.cycleStart;
+      if(!rs.length){var e=document.createElement("div");e.className="empty";e.textContent="ยังไม่มีการบันทึก — ใส่เลขมิเตอร์วันนี้ด้านบน";ll.appendChild(e);}
+      rs.forEach(function(r,i){
+        var delta=r.reading-prev, dd=Math.max(1,daysBetween(prevDate,r.date)||1);
+        var row=document.createElement("div");row.className="logrow";
+        row.innerHTML="<span class='d'>"+fmtDate(r.date)+"</span>"+
+          "<span class='rd'>"+u(r.reading)+"</span>"+
+          "<span class='delta'>+<b>"+u(delta)+"</b> หน่วย<br><small style='color:var(--faint)'>"+u(delta/dd)+" /วัน</small></span>"+
+          "<button class='x' data-del='"+i+"' aria-label='ลบ'>✕</button>";
+        ll.appendChild(row);
+        prev=r.reading;prevDate=r.date;
+      });
+    }
+
+    // history
+    var hc=$("#histCard"),hl=$("#histList");
+    if(state.history&&state.history.length){
+      hc.hidden=false;hl.innerHTML="";
+      state.history.slice().reverse().forEach(function(h){
+        var it=document.createElement("div");it.className="hist-item";
+        it.innerHTML="<span class='hd'>"+fmtDate(h.start)+" – "+fmtDate(h.end)+"</span><span class='hu num'>"+u(h.units)+" หน่วย</span><span class='ht'>฿ "+money(h.total)+"</span>";
+        hl.appendChild(it);
+      });
+    }else{hc.hidden=true;}
+
+    $("#exBanner").hidden=!state.example;
+    $("#uCycleDays").textContent=state.cycleDays;
+  }
+
+  // ---- settings render ----
+  function renderSettings(){
+    $("#meterType").value=state.meterType;
+    $("#ftRate").value=state.ft;
+    $("#serviceCharge").value=state.serviceCharge;
+    $("#vatRate").value=state.vat;
+    $("#cycleDays").value=state.cycleDays;
+    $("#ftPeriodTxt").innerHTML="ค่าเริ่มต้น = <b>0.1623</b> บาท/หน่วย สำหรับงวด <b>ก.ย.–ธ.ค. 2569</b> · งวดถัดไปประกาศประมาณ ธ.ค. 2569";
+    var te=$("#tierEdit");te.innerHTML="";
+    state.tiers.forEach(function(t,i){
+      var prev=i===0?0:(state.tiers[i-1].upTo||0);
+      var row=document.createElement("div");row.className="tier-edit";
+      var lbl=(t.upTo==null)?("เกิน "+prev):((prev)+"–"+t.upTo);
+      row.innerHTML="<span class='tlab'>หน่วยที่ "+lbl+"</span>"+
+        "<input type='number' step='0.0001' class='num-in' data-tier='"+i+"' value='"+t.rate+"'>"+
+        "<span class='tlab'>฿/หน่วย</span>";
+      te.appendChild(row);
+    });
+    te.querySelectorAll("[data-tier]").forEach(function(inp){
+      inp.addEventListener("change",function(){state.tiers[+inp.dataset.tier].rate=parseFloat(inp.value)||0;state.example=false;save();render();});
+    });
+  }
+
+  // ---- events ----
+  $("#modeSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button");if(!b)return;
+    state.mode=b.dataset.mode;
+    $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
+    $("#meterMode").hidden=state.mode!=="meter";
+    $("#unitsMode").hidden=state.mode!=="units";
+    $("#modeSubtitle").textContent=state.mode==="units"?"ประมาณเร็ว":"";
+    save();render();
+  });
+
+  $("#bdSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button");if(!b)return;
+    bdView=b.dataset.bd;
+    $("#bdSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
+    render();
+  });
+
+  $("#addReading").addEventListener("click",function(){
+    var v=parseFloat($("#curReading").value);
+    var dt=$("#curDate").value||todayStr();
+    if(!isFinite(v)){$("#curReading").focus();return;}
+    if(v<state.startReading){alert("เลขมิเตอร์น้อยกว่าเลขตั้งต้นของรอบ ("+u(state.startReading)+")\nถ้าขึ้นรอบใหม่แล้ว ให้กด “เริ่มรอบใหม่”");return;}
+    state.readings.push({date:dt,reading:v});
+    state.example=false;
+    $("#curReading").value="";
+    save();render();
+  });
+
+  $("#logList").addEventListener("click",function(e){
+    var b=e.target.closest("[data-del]");if(!b)return;
+    var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
+    var target=rs[+b.dataset.del];
+    state.readings=state.readings.filter(function(r){return!(r.date===target.date&&r.reading===target.reading)});
+    save();render();
+  });
+
+  $("#newCycle").addEventListener("click",function(){
+    var d=derive();
+    if(state.mode==="meter"&&d.unitsNow>0){
+      var bill=computeBill(d.unitsNow);
+      state.history=state.history||[];
+      state.history.push({start:state.cycleStart,end:d.curDate,units:d.unitsNow,total:bill.total});
+      var last=d.curReading;
+      var nd=prompt("เริ่มรอบบิลใหม่\nใส่เลขมิเตอร์ตั้งต้นของรอบใหม่:",last);
+      if(nd===null)return;
+      state.startReading=parseFloat(nd)||last;
+      state.cycleStart=todayStr();
+      state.readings=[];
+    }else{
+      var nd2=prompt("เริ่มรอบใหม่\nใส่เลขมิเตอร์ตั้งต้นวันนี้:","");
+      if(nd2===null)return;
+      state.startReading=parseFloat(nd2)||0;
+      state.cycleStart=todayStr();
+      state.readings=[];
+      state.mode="meter";
+      $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x.dataset.mode==="meter")});
+      $("#meterMode").hidden=false;$("#unitsMode").hidden=true;
+    }
+    state.example=false;
+    save();render();
+  });
+
+  // units mode inputs
+  $("#uUnits").addEventListener("input",function(){state.manual.units=parseFloat(this.value)||0;state.example=false;save();render();});
+  $("#uDays").addEventListener("input",function(){state.manual.days=parseFloat(this.value)||0;state.example=false;save();render();});
+
+  // settings inputs
+  $("#meterType").addEventListener("change",function(){
+    state.meterType=this.value;
+    state.tiers=JSON.parse(JSON.stringify(DEFAULT_TIERS[this.value]));
+    state.serviceCharge=DEFAULT_SERVICE[this.value];
+    state.example=false;save();renderSettings();render();
+  });
+  $("#ftRate").addEventListener("change",function(){state.ft=parseFloat(this.value)||0;state.example=false;save();render();});
+  $("#serviceCharge").addEventListener("change",function(){state.serviceCharge=parseFloat(this.value)||0;state.example=false;save();render();});
+  $("#vatRate").addEventListener("change",function(){state.vat=parseFloat(this.value)||0;state.example=false;save();render();});
+  $("#cycleDays").addEventListener("change",function(){state.cycleDays=parseInt(this.value)||30;state.example=false;save();render();});
+
+  $("#clearEx").addEventListener("click",function(){
+    var mt=state.meterType;
+    state=seed();state.example=false;
+    state.readings=[];state.history=[];state.manual={units:0,days:0};
+    state.cycleStart=todayStr();state.startReading=0;
+    save();initFields();render();
+  });
+  $("#resetAll").addEventListener("click",function(){
+    if(!confirm("ล้างข้อมูลทั้งหมดและเริ่มต้นใหม่?"))return;
+    try{localStorage.removeItem(KEY)}catch(e){}
+    state=seed();state.example=false;
+    state.readings=[];state.history=[];state.manual={units:0,days:0};
+    state.cycleStart=todayStr();state.startReading=0;
+    save();initFields();render();$("#settings").open=false;
+  });
+
+  // theme
+  var tb=$("#themeBtn");
+  function curTheme(){return document.documentElement.getAttribute("data-theme")}
+  tb.addEventListener("click",function(){
+    var t=curTheme();
+    var next=t==="dark"?"light":(t==="light"?"dark":(matchMedia("(prefers-color-scheme:dark)").matches?"light":"dark"));
+    document.documentElement.setAttribute("data-theme",next);
+    try{localStorage.setItem("peaTheme",next)}catch(e){}
+  });
+  try{var st=localStorage.getItem("peaTheme");if(st)document.documentElement.setAttribute("data-theme",st);}catch(e){}
+
+  function initFields(){
+    $("#curDate").value=todayStr();
+    $("#uUnits").value=state.manual&&state.manual.units?state.manual.units:"";
+    $("#uDays").value=state.manual&&state.manual.days?state.manual.days:"";
+    $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x.dataset.mode===state.mode)});
+    $("#meterMode").hidden=state.mode!=="meter";
+    $("#unitsMode").hidden=state.mode!=="units";
+    renderSettings();
+  }
+
+  initFields();
+  render();
+})();
+</script>
+</body>
+</html>
