@@ -3,754 +3,770 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#6437c9">
+<meta name="theme-color" content="#eaa41c">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>คำนวณค่าไฟล่วงหน้า PEA</title>
+<title>คำนวณค่าไฟ น้องไฟ</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Itim&family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600&display=swap');
 
   :root{
-    --bg:#f5f4fb;
-    --surface:#ffffff;
-    --surface-2:#efedf9;
-    --ink:#1d1a2e;
-    --muted:#6c688a;
-    --faint:#918da8;
-    --border:#e4e0f2;
-    --border-strong:#d4cdec;
-    --accent:#6437c9;
-    --accent-ink:#4d27a6;
-    --accent-soft:#ece4fb;
-    --accent-line:#d8c9f6;
-    --warn:#c2691a;
-    --warn-soft:#fbedd8;
-    --good:#0e8a5f;
-    --good-soft:#d9f2e6;
-    --danger:#cf2f4a;
-    --shadow:0 1px 2px rgba(29,26,46,.04),0 8px 24px -14px rgba(29,26,46,.18);
-    --shadow-lift:0 2px 6px rgba(29,26,46,.06),0 20px 40px -20px rgba(80,50,180,.30);
-    --r:16px;
-    --r-sm:10px;
+    --bg:#fdfaf2;--surface:#fffefb;--surface-2:#f7f0e2;--ink:#43331e;--muted:#8a7350;--faint:#ab9773;
+    --border:#eaddc2;--border-strong:#dcc9a4;--accent:#eaa41c;--accent-ink:#9a6212;--accent-soft:#fbeac4;--accent-line:#eed7a0;
+    --warn:#d17a26;--warn-soft:#fbe4c8;--good:#5c9c3c;--good-soft:#e7f1d0;--danger:#c8492e;
+    --shadow:0 1px 2px rgba(90,66,26,.05),0 10px 26px -14px rgba(120,86,30,.28);
+    --shadow-lift:0 2px 8px rgba(120,86,30,.12),0 22px 44px -20px rgba(180,120,30,.36);
+    --r:20px;--r-sm:13px;
   }
-  :root:not([data-theme="light"]){
-    @media (prefers-color-scheme:dark){
-      --bg:#131120;
-      --surface:#1c192b;
-      --surface-2:#262138;
-      --ink:#edeafa;
-      --muted:#a49fc0;
-      --faint:#7f7a9c;
-      --border:#302a46;
-      --border-strong:#3d3658;
-      --accent:#a98cf7;
-      --accent-ink:#c3adff;
-      --accent-soft:#291f45;
-      --accent-line:#4a3a72;
-      --warn:#f0ad55;
-      --warn-soft:#3a2c17;
-      --good:#37cf93;
-      --good-soft:#153427;
-      --danger:#ff6d84;
-      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.7);
-      --shadow-lift:0 2px 8px rgba(0,0,0,.4),0 24px 50px -22px rgba(0,0,0,.8);
-    }
-  }
+  :root:not([data-theme="light"]){@media (prefers-color-scheme:dark){
+    --bg:#231b11;--surface:#2e2417;--surface-2:#3a2e1c;--ink:#f6ecd8;--muted:#c6b088;--faint:#94805e;
+    --border:#43371f;--border-strong:#54462a;--accent:#f5c14e;--accent-ink:#f7cf6a;--accent-soft:#3a2c13;--accent-line:#5a4826;
+    --warn:#eda253;--warn-soft:#3a2915;--good:#8ac866;--good-soft:#22300f;--danger:#f0785a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -16px rgba(0,0,0,.7);
+    --shadow-lift:0 2px 10px rgba(0,0,0,.45),0 26px 52px -22px rgba(0,0,0,.8);
+  }}
   :root[data-theme="dark"]{
-    --bg:#131120;
-    --surface:#1c192b;
-    --surface-2:#262138;
-    --ink:#edeafa;
-    --muted:#a49fc0;
-    --faint:#7f7a9c;
-    --border:#302a46;
-    --border-strong:#3d3658;
-    --accent:#a98cf7;
-    --accent-ink:#c3adff;
-    --accent-soft:#291f45;
-    --accent-line:#4a3a72;
-    --warn:#f0ad55;
-    --warn-soft:#3a2c17;
-    --good:#37cf93;
-    --good-soft:#153427;
-    --danger:#ff6d84;
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.7);
-    --shadow-lift:0 2px 8px rgba(0,0,0,.4),0 24px 50px -22px rgba(0,0,0,.8);
+    --bg:#231b11;--surface:#2e2417;--surface-2:#3a2e1c;--ink:#f6ecd8;--muted:#c6b088;--faint:#94805e;
+    --border:#43371f;--border-strong:#54462a;--accent:#f5c14e;--accent-ink:#f7cf6a;--accent-soft:#3a2c13;--accent-line:#5a4826;
+    --warn:#eda253;--warn-soft:#3a2915;--good:#8ac866;--good-soft:#22300f;--danger:#f0785a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -16px rgba(0,0,0,.7);
+    --shadow-lift:0 2px 10px rgba(0,0,0,.45),0 26px 52px -22px rgba(0,0,0,.8);
   }
 
   *{box-sizing:border-box}
-  body{
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-    padding:0;
-  }
-  .wrap{max-width:760px;margin:0 auto;padding:22px 16px 72px}
-  h1,h2,h3{font-family:'Kanit','IBM Plex Sans Thai',sans-serif;margin:0;line-height:1.2;text-wrap:balance;font-weight:600}
+  body{background:var(--bg);color:var(--ink);font-family:'Sarabun',system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:560px;margin:0 auto;padding:22px 16px 80px}
+  h1,h2,h3{font-family:'Itim','Sarabun',sans-serif;margin:0;line-height:1.25;text-wrap:balance;font-weight:400;letter-spacing:.01em}
   .num{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  p{margin:0}
 
-  /* header */
-  header{display:flex;align-items:center;gap:13px;margin-bottom:20px}
-  .logo{
-    width:46px;height:46px;flex:none;border-radius:13px;
-    background:linear-gradient(150deg,var(--accent),#8b5cf6);
-    display:grid;place-items:center;box-shadow:var(--shadow-lift)}
-  .logo svg{width:26px;height:26px}
-  header .tt h1{font-size:1.32rem;letter-spacing:-.01em}
-  header .tt p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
-  .theme-btn{margin-left:auto;flex:none;border:1px solid var(--border);background:var(--surface);color:var(--muted);
-    width:38px;height:38px;border-radius:10px;cursor:pointer;display:grid;place-items:center;font-size:1.05rem}
+  header{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+  .logo{width:50px;height:50px;flex:none;border-radius:16px;background:linear-gradient(150deg,#f6c04a,#e8991a);display:grid;place-items:center;box-shadow:var(--shadow-lift)}
+  .logo svg{width:28px;height:28px}
+  header .tt h1{font-size:1.5rem}
+  header .tt p{margin:1px 0 0;color:var(--muted);font-size:.85rem}
+  .theme-btn{margin-left:auto;flex:none;border:1px solid var(--border);background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:12px;cursor:pointer;display:grid;place-items:center;font-size:1.1rem}
   .theme-btn:hover{border-color:var(--border-strong);color:var(--ink)}
 
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
-  .card > .card-h{display:flex;align-items:baseline;gap:9px;margin:-2px 0 14px}
-  .card-h h2{font-size:1.02rem}
-  .card-h .sub{color:var(--faint);font-size:.78rem;margin-left:auto;font-weight:500}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+  .card-h{display:flex;align-items:baseline;gap:9px;margin:-3px 0 15px}
+  .card-h h2{font-size:1.18rem}
+  .card-h .sub{color:var(--faint);font-size:.8rem;margin-left:auto;font-weight:500}
 
-  .eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink)}
+  /* ---- mascot ---- */
+  .mascot-wrap{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .mascot{width:82px;height:82px;flex:none;animation:bob 3.2s ease-in-out infinite}
+  .mascot svg{width:100%;height:100%;overflow:visible;display:block}
+  .mascot .glow{fill:var(--accent);opacity:.35;filter:blur(9px);transition:fill .4s,opacity .4s}
+  .mascot .cheek{fill:#f4a173;opacity:.5}
+  .mascot.happy .glow{fill:#77c247;opacity:.45}
+  .mascot.worried .glow{fill:#e77a2a;opacity:.5}
+  .bubble{position:relative;background:var(--surface-2);border:1.5px solid var(--accent-line);border-radius:15px;padding:11px 14px;font-family:'Itim','Sarabun',cursive;font-size:1rem;color:var(--ink);line-height:1.4;flex:1;min-height:44px;display:flex;align-items:center}
+  .bubble:before{content:"";position:absolute;left:-8px;top:50%;margin-top:-7px;width:14px;height:14px;background:var(--surface-2);border-left:1.5px solid var(--accent-line);border-bottom:1.5px solid var(--accent-line);transform:rotate(45deg)}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
-  /* example banner */
-  .banner{display:flex;gap:10px;align-items:center;background:var(--accent-soft);border:1px solid var(--accent-line);
-    color:var(--accent-ink);border-radius:12px;padding:10px 13px;margin-bottom:16px;font-size:.85rem}
-  .banner b{font-weight:600}
-  .banner button{margin-left:auto;flex:none;border:1px solid var(--accent-line);background:transparent;color:var(--accent-ink);
-    font-family:inherit;font-size:.8rem;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;white-space:nowrap}
-  .banner button:hover{background:rgba(255,255,255,.4)}
-  :root[data-theme="dark"] .banner button:hover,:root:not([data-theme="light"]) .banner button:hover{background:rgba(255,255,255,.06)}
+  /* ---- SETUP ---- */
+  .setup-intro{color:var(--muted);font-size:.92rem;margin:-4px 0 18px}
+  .step{margin-bottom:22px}
+  .step-lab{display:flex;align-items:center;gap:9px;font-family:'Itim','Sarabun',sans-serif;font-size:1.1rem;margin-bottom:11px}
+  .step-lab .n{width:28px;height:28px;flex:none;border-radius:50%;background:var(--accent);color:#4a3410;font-family:'Kanit';font-weight:700;display:grid;place-items:center;font-size:.9rem}
+  .choice{display:grid;gap:10px}
+  .choice button{display:flex;align-items:center;gap:13px;text-align:left;width:100%;font-family:inherit;
+    border:2px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:16px;padding:14px 15px;cursor:pointer;transition:border-color .15s,background .15s}
+  .choice button:hover{border-color:var(--accent)}
+  .choice button.on{border-color:var(--accent);background:var(--accent-soft)}
+  .choice .ico{width:42px;height:42px;flex:none;border-radius:13px;background:var(--surface-2);display:grid;place-items:center;font-size:1.3rem}
+  .choice button.on .ico{background:var(--surface)}
+  .choice .ct{flex:1}
+  .choice .ct .t{font-family:'Itim','Sarabun',sans-serif;font-size:1.05rem}
+  .choice .ct .d{font-size:.82rem;color:var(--muted);margin-top:1px}
+  .choice .chk{color:var(--accent-ink);font-size:1.25rem;opacity:0;font-weight:700}
+  .choice button.on .chk{opacity:1}
+  .hint-amp{font-size:.83rem;color:var(--faint);margin-top:9px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
 
-  /* hero tiles */
+  /* ---- summary ---- */
   .tiles{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-  .tile{border-radius:14px;padding:15px 15px 16px;border:1px solid var(--border);position:relative;overflow:hidden}
-  .tile .lab{font-size:.79rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px}
-  .tile .lab .dot{width:8px;height:8px;border-radius:50%;flex:none}
-  .tile .big{font-size:2.15rem;font-weight:700;letter-spacing:-.02em;margin-top:6px;line-height:1}
+  .tile{border-radius:16px;padding:16px;border:1px solid var(--border)}
+  .tile .lab{font-size:.83rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .tile .lab .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .tile .big{font-size:2.2rem;font-weight:700;letter-spacing:-.02em;margin-top:7px;line-height:1}
   .tile .big .cur{font-size:1.05rem;font-weight:600;color:var(--muted);margin-right:2px}
-  .tile .meta{font-size:.78rem;color:var(--muted);margin-top:7px}
-  .tile.now{background:var(--surface-2)}
+  .tile .meta{font-size:.8rem;color:var(--muted);margin-top:8px}
+  .tile.now{background:var(--good-soft);border-color:var(--good-soft)}
   .tile.now .dot{background:var(--good)}
   .tile.fc{background:linear-gradient(160deg,var(--warn-soft),var(--surface));border-color:var(--warn-soft)}
   .tile.fc .dot{background:var(--warn)}
-  .tile.fc .big{color:var(--ink)}
+  .explain{margin-top:14px;font-size:.87rem;color:var(--muted);background:var(--surface-2);border-radius:13px;padding:12px 14px;line-height:1.6}
+  .explain b{color:var(--ink);font-weight:600}
+  .progress{margin-top:14px}
+  .pbar{height:11px;border-radius:7px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+  .pfill{height:100%;background:linear-gradient(90deg,#f0b431,#e8991a);border-radius:7px;transition:width .4s}
+  .pmeta{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:8px}
+  .pmeta b{color:var(--ink);font-weight:600}
 
-  .progress{margin-top:15px}
-  .progress .pbar{height:9px;border-radius:6px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
-  .progress .pfill{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6);border-radius:6px;transition:width .4s}
-  .progress .pmeta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:7px}
-  .progress .pmeta b{color:var(--ink);font-weight:600}
-
-  /* inputs */
-  .field{margin-bottom:13px}
-  .field:last-child{margin-bottom:0}
-  label.fl{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  /* ---- inputs ---- */
+  label.fl{display:block;font-size:.9rem;font-weight:600;margin-bottom:7px;color:var(--ink)}
   label.fl small{font-weight:400;color:var(--faint)}
   input[type=text],input[type=number],input[type=date],select{
-    width:100%;font-family:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--border-strong);
-    border-radius:var(--r-sm);background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none}
+    width:100%;font-family:inherit;font-size:1.05rem;padding:13px 14px;border:1.5px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none}
   input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-  .num-in{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-  .row2 .field{margin-bottom:0}
+  .num-in{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+  .big-in{font-size:1.5rem;padding:15px 16px;text-align:center}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-  .btn{font-family:'Kanit',sans-serif;font-weight:600;font-size:.92rem;border:none;border-radius:var(--r-sm);
-    padding:11px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
-  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 16px -8px var(--accent)}
-  .btn-primary:hover{background:var(--accent-ink)}
+  .btn{font-family:'Kanit',sans-serif;font-weight:600;font-size:1rem;border:none;border-radius:var(--r-sm);padding:14px 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn-primary{background:linear-gradient(160deg,#f4b62f,#e7970f);color:#402d0c;box-shadow:0 8px 18px -8px rgba(210,140,20,.7)}
+  .btn-primary:hover{filter:brightness(1.04)}
   .btn-ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--border)}
   .btn-ghost:hover{border-color:var(--border-strong)}
   .btn-block{width:100%}
-  .btn-row{display:flex;gap:10px;margin-top:14px}
-  .btn-row .btn{flex:1}
+  .btn-lg{font-size:1.08rem;padding:16px}
 
-  .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
-  .seg button{font-family:inherit;font-weight:600;font-size:.82rem;border:none;background:transparent;color:var(--muted);
-    padding:6px 13px;border-radius:8px;cursor:pointer}
-  .seg button.on{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow)}
+  .cycle-line{display:flex;gap:9px;align-items:flex-start;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:13px;padding:11px 13px;font-size:.86rem;color:var(--accent-ink);margin-bottom:15px;line-height:1.5}
+  .cycle-line b{font-weight:600}
+  .link-btn{background:none;border:none;color:var(--muted);font-family:inherit;font-size:.87rem;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0}
+  .link-btn:hover{color:var(--accent-ink)}
+  .newcycle-row{display:flex;justify-content:center;margin-top:15px}
 
-  .cycle-info{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.83rem;color:var(--muted);margin-top:2px}
-  .cycle-info b{color:var(--ink);font-weight:600}
+  .feedback{font-size:.88rem;border-radius:11px;padding:10px 13px;margin-top:12px;display:none;align-items:center;gap:8px}
+  .feedback.show{display:flex}
+  .feedback.ok{background:var(--good-soft);color:var(--good)}
+  .feedback.err{background:#f7ddd2;color:var(--danger)}
+  :root[data-theme="dark"] .feedback.err,:root:not([data-theme="light"]) .feedback.err{background:#3a1c13}
 
-  /* breakdown table */
-  table{width:100%;border-collapse:collapse;font-size:.88rem}
-  .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}
+  /* ---- disclosure ---- */
+  details.disc{border:1px solid var(--border);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+  details.disc>summary{list-style:none;cursor:pointer;padding:16px 20px;font-family:'Itim','Sarabun',sans-serif;font-size:1.1rem;display:flex;align-items:center;gap:9px}
+  details.disc>summary::-webkit-details-marker{display:none}
+  details.disc>summary .chev{margin-left:auto;color:var(--faint);transition:transform .2s}
+  details.disc[open]>summary .chev{transform:rotate(180deg)}
+  .disc-body{padding:4px 20px 20px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  .tbl-scroll{overflow-x:auto}
+  th,td{text-align:right;padding:9px 6px;border-bottom:1px solid var(--border)}
   th:first-child,td:first-child{text-align:left}
-  thead th{font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:600;border-bottom:1px solid var(--border-strong)}
+  thead th{font-size:.74rem;letter-spacing:.03em;color:var(--faint);font-weight:600;border-bottom:1px solid var(--border-strong)}
   tbody td{font-variant-numeric:tabular-nums}
-  tbody td.amt{font-family:'Kanit',sans-serif;font-weight:500}
-  tr.sum td{border-top:1.5px solid var(--border-strong);border-bottom:none;padding-top:11px;font-weight:600}
-  tr.total td{font-family:'Kanit',sans-serif;font-size:1.05rem;font-weight:700;color:var(--accent-ink);border-bottom:none}
+  tbody td.amt{font-family:'Kanit';font-weight:500}
+  tr.sum td{border-top:1.5px solid var(--border-strong);border-bottom:none;padding-top:12px;font-weight:600}
+  tr.total td{font-family:'Kanit';font-size:1.15rem;font-weight:700;color:var(--accent-ink);border-bottom:none}
   tr.total td:first-child{color:var(--ink)}
   .tier-hi td{background:var(--accent-soft)}
   .muted-row td{color:var(--faint)}
+  .bd-toggle{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:3px;gap:2px;margin-bottom:14px}
+  .bd-toggle button{font-family:inherit;font-weight:600;font-size:.84rem;border:none;background:transparent;color:var(--muted);padding:7px 14px;border-radius:8px;cursor:pointer}
+  .bd-toggle button.on{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow)}
 
-  /* meter log */
-  .log-add{display:grid;grid-template-columns:1.1fr 1fr auto;gap:9px;align-items:end}
-  .log-add .btn{padding:10px 14px}
-  .loglist{margin-top:6px}
-  .logrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--border)}
+  /* ---- log ---- */
+  .logrow{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;padding:11px 2px;border-bottom:1px solid var(--border)}
   .logrow:last-child{border-bottom:none}
-  .logrow .d{font-size:.82rem;color:var(--muted);font-weight:500}
-  .logrow .rd{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;font-weight:500}
-  .logrow .rd small{color:var(--faint);font-weight:400;font-family:'IBM Plex Sans Thai'}
+  .logrow .d{font-size:.84rem;color:var(--muted);font-weight:500}
+  .logrow .rd{font-family:'Kanit';font-variant-numeric:tabular-nums;font-weight:500}
+  .logrow .rd small{color:var(--faint);font-weight:400;font-family:'Sarabun'}
   .logrow .delta{font-size:.82rem;text-align:right}
-  .logrow .delta b{font-family:'Kanit',sans-serif;color:var(--accent-ink);font-weight:600}
-  .logrow .x{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:1.1rem;padding:2px 4px;line-height:1}
+  .logrow .delta b{font-family:'Kanit';color:var(--accent-ink);font-weight:600}
+  .logrow .x{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:1.15rem;padding:4px 6px;line-height:1}
   .logrow .x:hover{color:var(--danger)}
-  .empty{color:var(--faint);font-size:.86rem;text-align:center;padding:18px 0}
-
-  .hist-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:.86rem}
+  .empty{color:var(--faint);font-size:.88rem;text-align:center;padding:16px 0}
+  .hist-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:.87rem}
   .hist-item:last-child{border-bottom:none}
   .hist-item .hd{color:var(--muted)}
   .hist-item .hu{margin-left:auto;color:var(--muted)}
-  .hist-item .ht{font-family:'Kanit',sans-serif;font-weight:600;color:var(--ink);min-width:92px;text-align:right}
+  .hist-item .ht{font-family:'Kanit';font-weight:600;min-width:92px;text-align:right}
 
-  /* settings */
-  details.settings{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
-  details.settings > summary{list-style:none;cursor:pointer;padding:15px 18px;font-family:'Kanit',sans-serif;font-weight:600;display:flex;align-items:center;gap:9px}
-  details.settings > summary::-webkit-details-marker{display:none}
-  details.settings > summary .chev{margin-left:auto;color:var(--faint);transition:transform .2s}
-  details.settings[open] > summary .chev{transform:rotate(180deg)}
-  .settings-body{padding:2px 18px 18px;border-top:1px solid var(--border)}
-  .setgroup{margin-top:16px}
-  .setgroup h3{font-size:.9rem;margin-bottom:9px;color:var(--ink)}
-  .ftbox{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:12px;padding:13px 14px}
-  .ftbox .ftlab{font-size:.78rem;color:var(--accent-ink);font-weight:600}
-  .ftbox .ftperiod{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  /* ---- quick calc ---- */
+  .quick .qrow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+  .quick .qres{margin-top:14px;font-size:.95rem;color:var(--muted)}
+  .quick .qres b{font-family:'Kanit';font-size:1.35rem;color:var(--accent-ink);font-weight:700}
+
+  /* ---- settings ---- */
+  .setgroup{margin-top:18px}
+  .setgroup h3{font-size:1.02rem;margin-bottom:10px}
+  .ftbox{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:14px}
+  .ftbox .ftperiod{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.55}
   .ftbox a{color:var(--accent-ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--accent-line)}
-  .tier-edit{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:7px;font-size:.85rem}
+  .tier-edit{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;font-size:.86rem}
   .tier-edit .tlab{color:var(--muted);font-variant-numeric:tabular-nums}
-  .tier-edit input{padding:7px 9px;font-size:.88rem}
-  .hint{font-size:.78rem;color:var(--faint);margin-top:4px;line-height:1.5}
-  .src{font-size:.75rem;color:var(--faint);margin-top:22px;text-align:center;line-height:1.7}
-  .src a{color:var(--muted)}
-  .foot-reset{display:flex;justify-content:center;margin-top:14px}
-  .foot-reset button{background:none;border:none;color:var(--faint);font-family:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+  .tier-edit input{padding:8px 10px;font-size:.92rem}
+  .hint{font-size:.8rem;color:var(--faint);margin-top:5px;line-height:1.55}
+  .foot-reset{display:flex;justify-content:center;margin-top:18px}
+  .foot-reset button{background:none;border:none;color:var(--faint);font-family:inherit;font-size:.82rem;cursor:pointer;text-decoration:underline}
   .foot-reset button:hover{color:var(--danger)}
+  .src{font-size:.76rem;color:var(--faint);margin-top:22px;text-align:center;line-height:1.7}
+  .src a{color:var(--muted)}
 
-  @media(max-width:520px){
-    .tile .big{font-size:1.85rem}
-    .log-add{grid-template-columns:1fr 1fr;}
-    .log-add .btn{grid-column:1/-1}
-  }
-  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* ---- modal ---- */
+  .overlay{position:fixed;inset:0;background:rgba(58,42,20,.5);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .overlay.show{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-lift);max-width:400px;width:100%;padding:22px}
+  .modal h3{font-size:1.25rem;margin-bottom:8px}
+  .modal p{color:var(--muted);font-size:.9rem;line-height:1.55;margin-bottom:14px}
+  .modal .mbtns{display:flex;gap:10px;margin-top:18px}
+  .modal .mbtns .btn{flex:1}
+
+  @media(max-width:400px){.tile .big{font-size:1.85rem}.row2{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}.mascot{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="logo" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#fff"/></svg>
-    </div>
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#fff"/></svg></div>
     <div class="tt">
-      <h1>คำนวณค่าไฟล่วงหน้า</h1>
-      <p>จดเลขมิเตอร์ · ประมาณค่าไฟทั้งเดือน · อัตรา PEA บ้านอยู่อาศัยจริง</p>
+      <h1>คำนวณค่าไฟ</h1>
+      <p>จดเลขมิเตอร์ · รู้ค่าไฟล่วงหน้าทั้งเดือน</p>
     </div>
     <button class="theme-btn" id="themeBtn" title="สลับธีมสว่าง/มืด" aria-label="สลับธีม">◐</button>
   </header>
 
-  <div class="banner" id="exBanner" hidden>
-    <span>🔆 <b>กำลังแสดงข้อมูลตัวอย่าง</b> — กด “เริ่มรอบใหม่” แล้วใส่เลขมิเตอร์ของคุณเพื่อเริ่มใช้จริง</span>
-    <button id="clearEx">ล้างตัวอย่าง</button>
+  <!-- ============ SETUP ============ -->
+  <div class="card" id="setupCard" hidden>
+    <div class="mascot-wrap">
+      <div class="mascot neutral" aria-hidden="true">
+        <svg viewBox="0 0 120 120">
+          <circle class="glow" cx="60" cy="54" r="40"></circle>
+          <rect x="49" y="82" width="22" height="9" rx="3" fill="#c9a24a"></rect>
+          <rect x="51" y="90" width="18" height="6" rx="3" fill="#b08633"></rect>
+          <rect x="53" y="96" width="14" height="5" rx="2.5" fill="#8f6a26"></rect>
+          <circle cx="60" cy="52" r="33" fill="#ffe08a" stroke="#eaa41c" stroke-width="3"></circle>
+          <ellipse cx="48" cy="40" rx="7" ry="10" fill="#fff6d8" opacity=".7"></ellipse>
+          <circle class="cheek" cx="42" cy="60" r="5"></circle>
+          <circle class="cheek" cx="78" cy="60" r="5"></circle>
+          <circle cx="50" cy="50" r="4.5" fill="#5a3d16"></circle>
+          <circle cx="70" cy="50" r="4.5" fill="#5a3d16"></circle>
+          <path d="M50 62 Q60 72 70 62" fill="none" stroke="#5a3d16" stroke-width="3.2" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div class="bubble">สวัสดีจ้า เราชื่อ <b>น้องไฟ</b> 💡 มาช่วยกันดูค่าไฟกันเถอะ!</div>
+    </div>
+    <div class="card-h"><h2>ตั้งค่าครั้งแรก</h2><span class="sub">ทำครั้งเดียว 30 วินาที</span></div>
+    <p class="setup-intro">ใส่ข้อมูล 2 อย่างนี้ครั้งเดียว แล้วหลังจากนั้นแค่กรอกเลขมิเตอร์อย่างเดียวก็รู้ค่าไฟทันที</p>
+
+    <div class="step">
+      <div class="step-lab"><span class="n">1</span>มิเตอร์ที่บ้านเป็นแบบไหน?</div>
+      <div class="choice" id="setupChoice">
+        <button data-t="112" type="button">
+          <span class="ico">🏠</span>
+          <span class="ct"><span class="t">มิเตอร์บ้านทั่วไป</span><span class="d">15(45)A ขึ้นไป — บ้านส่วนใหญ่ใช้แบบนี้</span></span>
+          <span class="chk">✓</span>
+        </button>
+        <button data-t="111" type="button">
+          <span class="ico">🔌</span>
+          <span class="ct"><span class="t">มิเตอร์ขนาดเล็ก</span><span class="d">5(15)A — บ้านเล็ก/ห้องเช่า ใช้ไฟน้อย</span></span>
+          <span class="chk">✓</span>
+        </button>
+      </div>
+      <div class="hint-amp"><span>💡</span><span>ดูตัวเลขที่พิมพ์บนหน้ามิเตอร์ เช่น <b>15(45)A</b> หรือ <b>5(15)A</b> เลือกให้ตรง</span></div>
+    </div>
+
+    <div class="step">
+      <div class="step-lab"><span class="n">2</span>เลขมิเตอร์ตอนเริ่มรอบบิล</div>
+      <input type="number" inputmode="decimal" class="num-in big-in" id="setupReading" placeholder="0000">
+      <div class="hint">อ่านเฉพาะ <b>เลขสีดำ</b> บนหน้าปัด (เลขสีแดงตัวท้ายเป็นทศนิยม ไม่ต้องใส่)</div>
+      <div style="height:14px"></div>
+      <label class="fl" for="setupDate">รอบบิลนี้เริ่มเมื่อไหร่? <small>(ดูจากใบแจ้งค่าไฟ — ไม่รู้ใช้วันนี้ได้)</small></label>
+      <input type="date" id="setupDate">
+      <div class="hint">ใส่วันที่ให้ตรงกับรอบบิลจริง ระบบจะคาดการณ์ค่าทั้งเดือนได้แม่นขึ้น</div>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-lg" id="setupDone">เริ่มใช้งาน →</button>
+    <div class="feedback err" id="setupErr"></div>
   </div>
 
-  <!-- SUMMARY -->
-  <div class="card">
-    <div class="tiles">
-      <div class="tile now">
-        <div class="lab"><span class="dot"></span>ค่าไฟ ณ ปัจจุบัน</div>
-        <div class="big num"><span class="cur">฿</span><span id="nowCost">0</span></div>
-        <div class="meta" id="nowMeta">ใช้ไป 0 หน่วย</div>
-      </div>
-      <div class="tile fc">
-        <div class="lab"><span class="dot"></span>ประมาณการทั้งเดือน</div>
-        <div class="big num"><span class="cur">฿</span><span id="fcCost">0</span></div>
-        <div class="meta" id="fcMeta">คาดใช้ 0 หน่วย</div>
-      </div>
-    </div>
-    <div class="progress">
-      <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
-      <div class="pmeta">
-        <span>ผ่านไป <b id="daysElapsed">0</b> วัน จาก <b id="cycleDaysLbl">30</b></span>
-        <span>เฉลี่ย <b class="num" id="avgDay">0</b> ฿/วัน · <b class="num" id="avgUnit">0</b> หน่วย/วัน</span>
-      </div>
-    </div>
-  </div>
+  <!-- ============ APP ============ -->
+  <div id="app" hidden>
 
-  <!-- INPUT -->
-  <div class="card">
-    <div class="card-h">
-      <h2>บันทึกการใช้งาน</h2>
-      <span class="sub" id="modeSubtitle"></span>
-    </div>
-
-    <div class="field">
-      <div class="seg" id="modeSeg" role="tablist">
-        <button data-mode="meter" class="on">จากเลขมิเตอร์</button>
-        <button data-mode="units">ป้อนหน่วยเอง</button>
-      </div>
-    </div>
-
-    <!-- meter mode -->
-    <div id="meterMode">
-      <div class="cycle-info" id="cycleInfo"></div>
-      <div class="field" style="margin-top:12px">
-        <label class="fl">เลขมิเตอร์ล่าสุดวันนี้ <small>(อ่านจากหน้ามิเตอร์)</small></label>
-        <input type="number" inputmode="decimal" class="num-in" id="curReading" placeholder="เช่น 45398">
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label class="fl">วันที่อ่าน</label>
-          <input type="date" id="curDate">
+    <div class="card">
+      <div class="mascot-wrap">
+        <div class="mascot neutral" id="mascot" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle class="glow" id="mGlow" cx="60" cy="54" r="40"></circle>
+            <rect x="49" y="82" width="22" height="9" rx="3" fill="#c9a24a"></rect>
+            <rect x="51" y="90" width="18" height="6" rx="3" fill="#b08633"></rect>
+            <rect x="53" y="96" width="14" height="5" rx="2.5" fill="#8f6a26"></rect>
+            <circle cx="60" cy="52" r="33" fill="#ffe08a" stroke="#eaa41c" stroke-width="3"></circle>
+            <ellipse cx="48" cy="40" rx="7" ry="10" fill="#fff6d8" opacity=".7"></ellipse>
+            <circle class="cheek" cx="42" cy="60" r="5"></circle>
+            <circle class="cheek" cx="78" cy="60" r="5"></circle>
+            <circle id="mEyeL" cx="50" cy="50" r="4.5" fill="#5a3d16"></circle>
+            <circle id="mEyeR" cx="70" cy="50" r="4.5" fill="#5a3d16"></circle>
+            <path id="mMouth" d="M50 62 Q60 72 70 62" fill="none" stroke="#5a3d16" stroke-width="3.2" stroke-linecap="round"></path>
+          </svg>
         </div>
-        <div class="field" style="display:flex;align-items:end">
-          <button class="btn btn-primary btn-block" id="addReading">＋ บันทึกค่ามิเตอร์</button>
+        <div class="bubble"><span id="mSay"></span></div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile now">
+          <div class="lab"><span class="dot"></span>ค่าไฟถึงตอนนี้</div>
+          <div class="big num"><span class="cur">฿</span><span id="nowCost">0</span></div>
+          <div class="meta" id="nowMeta">ใช้ไป 0 หน่วย</div>
         </div>
-      </div>
-    </div>
-
-    <!-- units mode -->
-    <div id="unitsMode" hidden>
-      <div class="row2">
-        <div class="field">
-          <label class="fl">ใช้ไปแล้ว (หน่วย)</label>
-          <input type="number" inputmode="decimal" class="num-in" id="uUnits" placeholder="เช่น 188">
-        </div>
-        <div class="field">
-          <label class="fl">ผ่านไปแล้ว (วัน)</label>
-          <input type="number" inputmode="decimal" class="num-in" id="uDays" placeholder="เช่น 9">
-        </div>
-      </div>
-      <div class="hint">ประมาณการทั้งเดือนจะคิดจาก หน่วยที่ใช้ ÷ จำนวนวัน × <span id="uCycleDays">30</span> วัน</div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-ghost" id="newCycle">↻ เริ่มรอบใหม่</button>
-    </div>
-  </div>
-
-  <!-- BREAKDOWN -->
-  <div class="card">
-    <div class="card-h">
-      <h2>รายละเอียดการคิดเงิน</h2>
-      <div class="seg" id="bdSeg" style="margin-left:auto">
-        <button data-bd="fc" class="on">ทั้งเดือน</button>
-        <button data-bd="now">ปัจจุบัน</button>
-      </div>
-    </div>
-    <div class="tbl-scroll">
-      <table id="bdTable">
-        <thead>
-          <tr><th>ขั้นการใช้ไฟ</th><th>หน่วย</th><th>บาท/หน่วย</th><th>เป็นเงิน</th></tr>
-        </thead>
-        <tbody id="bdBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- METER LOG -->
-  <div class="card">
-    <div class="card-h">
-      <h2>ประวัติเลขมิเตอร์</h2>
-      <span class="sub">รอบปัจจุบัน</span>
-    </div>
-    <div class="loglist" id="logList"></div>
-  </div>
-
-  <!-- HISTORY -->
-  <div class="card" id="histCard" hidden>
-    <div class="card-h"><h2>รอบบิลที่ผ่านมา</h2></div>
-    <div id="histList"></div>
-  </div>
-
-  <!-- SETTINGS -->
-  <details class="settings" id="settings">
-    <summary>⚙️ ตั้งค่าอัตราค่าไฟ &amp; ค่า Ft <span class="chev">⌄</span></summary>
-    <div class="settings-body">
-
-      <div class="setgroup">
-        <h3>ประเภทผู้ใช้ไฟ (PEA บ้านอยู่อาศัย)</h3>
-        <select id="meterType">
-          <option value="111">1.1.1 — มิเตอร์ไม่เกิน 5 แอมป์ (ใช้ไฟน้อย)</option>
-          <option value="112">1.1.2 — มิเตอร์เกิน 5 แอมป์ (ใช้ไฟมาก)</option>
-        </select>
-        <div class="hint">โครงสร้างใหม่เริ่มรอบบิลเดือน ก.ย. 2569 — เปลี่ยนประเภทแล้วอัตราขั้นบันไดจะรีเซ็ตเป็นค่ามาตรฐานของประเภทนั้น</div>
-      </div>
-
-      <div class="setgroup">
-        <h3>ค่า Ft (ค่าไฟผันแปร)</h3>
-        <div class="ftbox">
-          <label class="ftlab">Ft (บาท/หน่วย)</label>
-          <input type="number" step="0.0001" class="num-in" id="ftRate" style="margin-top:6px">
-          <div class="ftperiod" id="ftPeriodTxt"></div>
-          <div class="ftperiod">อัปเดตอัตโนมัติจากเว็บไม่สามารถทำได้ในแอปที่เก็บข้อมูลในเครื่อง (เบราว์เซอร์บล็อกด้วยเหตุผลความปลอดภัย) — กดปุ่มด้านล่างเพื่อเปิดหน้าประกาศทางการ แล้วกรอกค่าล่าสุด แอปจะจำค่าไว้ให้</div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <a class="btn btn-ghost" style="font-size:.82rem;padding:8px 12px;text-decoration:none" href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">↗ ดูค่า Ft ล่าสุด (กกพ.)</a>
-            <a class="btn btn-ghost" style="font-size:.82rem;padding:8px 12px;text-decoration:none" href="https://www.pea.co.th/our-services/tariff/ft" target="_blank" rel="noopener">↗ PEA</a>
-          </div>
+        <div class="tile fc">
+          <div class="lab"><span class="dot"></span>ทั้งเดือน (คาดการณ์)</div>
+          <div class="big num"><span class="cur">฿</span><span id="fcCost">0</span></div>
+          <div class="meta" id="fcMeta">ประมาณ 0 หน่วย</div>
         </div>
       </div>
-
-      <div class="setgroup">
-        <h3>อัตราค่าพลังงานแบบขั้นบันได</h3>
-        <div id="tierEdit"></div>
-        <div class="hint">แต่ละแถวคือ “คิดหน่วยที่ …ถึง… ในราคาบาท/หน่วยนี้”</div>
+      <div class="explain" id="explain"></div>
+      <div class="progress">
+        <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+        <div class="pmeta">
+          <span>ผ่านไป <b id="daysElapsed">0</b> / <b id="cycleDaysLbl">30</b> วัน</span>
+          <span>เฉลี่ย <b class="num" id="avgDay">0</b> ฿/วัน</span>
+        </div>
       </div>
+    </div>
 
-      <div class="setgroup">
+    <div class="card">
+      <div class="card-h"><h2>อัปเดตเลขมิเตอร์</h2></div>
+      <div class="cycle-line" id="cycleInfo"></div>
+      <div style="margin:-6px 0 15px"><button class="link-btn" id="editCycleBtn">✎ แก้เลข/วันที่เริ่มรอบ</button></div>
+      <div id="editCycleBox" hidden style="background:var(--surface-2);border:1px solid var(--border);border-radius:13px;padding:14px;margin-bottom:15px">
+        <label class="fl" style="font-size:.85rem">เลขมิเตอร์ตอนเริ่มรอบ</label>
+        <input type="number" inputmode="decimal" class="num-in" id="editStartReading">
+        <div style="height:10px"></div>
+        <label class="fl" style="font-size:.85rem">วันที่เริ่มรอบบิล</label>
+        <input type="date" id="editStartDate">
+        <div style="height:12px"></div>
+        <div style="display:flex;gap:9px">
+          <button class="btn btn-ghost" id="editCycleCancel" style="flex:1;padding:11px">ยกเลิก</button>
+          <button class="btn btn-primary" id="editCycleSave" style="flex:1;padding:11px">บันทึก</button>
+        </div>
+      </div>
+      <label class="fl" for="curReading">เลขมิเตอร์วันนี้ <small>(อ่านเลขสีดำ)</small></label>
+      <input type="number" inputmode="decimal" class="num-in big-in" id="curReading" placeholder="0000">
+      <div style="height:12px"></div>
+      <label class="fl" for="curDate">วันที่</label>
+      <input type="date" id="curDate">
+      <div style="height:14px"></div>
+      <button class="btn btn-primary btn-block btn-lg" id="addReading">บันทึก แล้วคำนวณ</button>
+      <div class="feedback" id="addFb"></div>
+      <div class="newcycle-row"><button class="link-btn" id="newCycle">↻ ขึ้นบิลรอบใหม่แล้ว? เริ่มนับใหม่</button></div>
+    </div>
+
+    <details class="disc" id="bdDisc">
+      <summary>ดูวิธีคิดเงินแบบละเอียด <span class="chev">⌄</span></summary>
+      <div class="disc-body">
+        <div class="bd-toggle" id="bdSeg">
+          <button data-bd="now" class="on">ถึงตอนนี้ (จริง)</button>
+          <button data-bd="fc">ทั้งเดือน (คาดการณ์)</button>
+        </div>
+        <div class="tbl-scroll">
+          <table><thead><tr><th>ขั้นการใช้ไฟ</th><th>หน่วย</th><th>บาท/หน่วย</th><th>เป็นเงิน</th></tr></thead>
+          <tbody id="bdBody"></tbody></table>
+        </div>
+      </div>
+    </details>
+
+    <div class="card">
+      <div class="card-h"><h2>ประวัติเลขมิเตอร์</h2><span class="sub">รอบนี้</span></div>
+      <div id="logList"></div>
+    </div>
+
+    <div class="card" id="histCard" hidden>
+      <div class="card-h"><h2>รอบบิลที่ผ่านมา</h2></div>
+      <div id="histList"></div>
+    </div>
+
+    <details class="disc quick">
+      <summary>🧮 คำนวณเร็ว (ไม่ต้องใช้มิเตอร์) <span class="chev">⌄</span></summary>
+      <div class="disc-body">
+        <p class="hint" style="margin:0 0 12px">รู้จำนวนหน่วยอยู่แล้ว? ใส่เลขหน่วยเพื่อดูค่าไฟโดยประมาณได้เลย</p>
+        <div class="qrow">
+          <div><label class="fl" for="qUnits">จำนวนหน่วย (kWh)</label>
+          <input type="number" inputmode="decimal" class="num-in" id="qUnits" placeholder="เช่น 250"></div>
+          <button class="btn btn-ghost" id="qCalc">คิด</button>
+        </div>
+        <div class="qres" id="qRes"></div>
+      </div>
+    </details>
+
+    <details class="disc quick">
+      <summary>❄️ ประเมินค่าแอร์ต่อเดือน <span class="chev">⌄</span></summary>
+      <div class="disc-body">
+        <p class="hint" style="margin:0 0 12px">อยากรู้ว่าแอร์กินไฟเดือนละเท่าไหร่? ใส่ขนาดแอร์กับชั่วโมงที่เปิด</p>
         <div class="row2">
-          <div class="field">
-            <label class="fl">ค่าบริการรายเดือน (บาท)</label>
-            <input type="number" step="0.01" class="num-in" id="serviceCharge">
-          </div>
-          <div class="field">
-            <label class="fl">VAT (%)</label>
-            <input type="number" step="0.1" class="num-in" id="vatRate">
-          </div>
+          <div><label class="fl" for="acBtu">ขนาดแอร์ (BTU)</label>
+          <input type="number" inputmode="decimal" class="num-in" id="acBtu" placeholder="เช่น 12000"></div>
+          <div><label class="fl" for="acHr">เปิดกี่ชม./วัน</label>
+          <input type="number" inputmode="decimal" class="num-in" id="acHr" placeholder="เช่น 8"></div>
         </div>
-        <div class="field" style="margin-top:11px">
-          <label class="fl">จำนวนวันต่อรอบบิล</label>
-          <input type="number" class="num-in" id="cycleDays">
+        <div style="margin-top:12px"><label class="fl" for="acType">ประเภทแอร์</label>
+          <select id="acType"><option value="inv">อินเวอร์เตอร์ (ประหยัดไฟ)</option><option value="fix">แบบธรรมดา (Fixed speed)</option></select>
         </div>
+        <button class="btn btn-primary btn-block" id="acCalc" style="margin-top:14px">ประเมินค่าแอร์</button>
+        <div class="qres" id="acRes" style="margin-top:14px"></div>
       </div>
+    </details>
 
-      <div class="foot-reset">
-        <button id="resetAll">ล้างข้อมูลทั้งหมด แล้วเริ่มต้นใหม่</button>
+    <details class="disc" id="settings">
+      <summary>⚙️ ตั้งค่าอัตราค่าไฟ &amp; Ft <span class="chev">⌄</span></summary>
+      <div class="disc-body">
+        <p class="hint" style="margin:0">ปกติไม่ต้องแตะส่วนนี้ — ค่ามาตรฐานถูกตั้งให้ตรงกับ PEA แล้ว จะแก้เมื่อมีประกาศค่า Ft ใหม่เท่านั้น</p>
+
+        <div class="setgroup">
+          <h3>ประเภทผู้ใช้ไฟ</h3>
+          <select id="meterType">
+            <option value="112">มิเตอร์บ้านทั่วไป 15(45)A ขึ้นไป (1.1.2)</option>
+            <option value="111">มิเตอร์ขนาดเล็ก 5(15)A (1.1.1)</option>
+          </select>
+          <div class="hint">เปลี่ยนแล้วอัตราขั้นบันได + ค่าบริการจะรีเซ็ตตามประเภทนั้น</div>
+        </div>
+
+        <div class="setgroup">
+          <h3>ค่า Ft (ค่าไฟผันแปร)</h3>
+          <div class="ftbox">
+            <label class="fl" for="ftRate" style="font-size:.82rem;color:var(--accent-ink)">Ft (บาท/หน่วย)</label>
+            <input type="number" step="0.0001" class="num-in" id="ftRate">
+            <div class="ftperiod" id="ftPeriodTxt"></div>
+            <div class="ftperiod">อัปเดตอัตโนมัติจากเว็บทำไม่ได้ในแอปแบบนี้ (เบราว์เซอร์บล็อกเพื่อความปลอดภัย) — กดลิงก์ดูค่าล่าสุด แล้วพิมพ์ใส่ช่องนี้ แอปจะจำไว้ให้</div>
+            <div style="margin-top:11px;display:flex;gap:8px;flex-wrap:wrap">
+              <a class="btn btn-ghost" style="font-size:.83rem;padding:9px 13px;text-decoration:none" href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">↗ ดูค่า Ft ล่าสุด (กกพ.)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="setgroup">
+          <h3>อัตราค่าพลังงานแบบขั้นบันได</h3>
+          <div id="tierEdit"></div>
+          <div class="hint">แต่ละแถว = คิดหน่วยในช่วงนั้น ราคาบาท/หน่วยเท่านี้</div>
+        </div>
+
+        <div class="setgroup">
+          <div class="row2">
+            <div><label class="fl">ค่าบริการ/เดือน (บาท)</label><input type="number" step="0.01" class="num-in" id="serviceCharge"></div>
+            <div><label class="fl">VAT (%)</label><input type="number" step="0.1" class="num-in" id="vatRate"></div>
+          </div>
+          <div style="margin-top:12px"><label class="fl">จำนวนวันต่อรอบบิล</label><input type="number" class="num-in" id="cycleDays"></div>
+        </div>
+
+        <div class="foot-reset"><button id="resetAll">ล้างข้อมูลทั้งหมด เริ่มต้นใหม่</button></div>
       </div>
+    </details>
+
+    <div class="src">
+      อัตรา PEA บ้านอยู่อาศัย โครงสร้างใหม่ ก.ย. 2569 · Ft งวด ก.ย.–ธ.ค. 2569 = 0.1623 บาท/หน่วย · VAT 7%<br>
+      ที่มา: <a href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">กกพ.</a> ·
+      <a href="https://www.pea.co.th/our-services/tariff/ft" target="_blank" rel="noopener">PEA</a> — เป็นค่าประมาณ ค่าจริงยึดตามใบแจ้งค่าไฟ
     </div>
-  </details>
+  </div>
+</div>
 
-  <div class="src">
-    อัตราอ้างอิง: PEA บ้านอยู่อาศัย โครงสร้างใหม่ ก.ย. 2569 · ค่า Ft งวด ก.ย.–ธ.ค. 2569 = 0.1623 บาท/หน่วย · VAT 7%<br>
-    ที่มา:
-    <a href="https://www.erc.or.th/th/document-ft/" target="_blank" rel="noopener">กกพ. (ERC)</a> ·
-    <a href="https://www.pea.co.th/our-services/tariff/ft" target="_blank" rel="noopener">PEA</a>
-    — เป็นเครื่องมือประมาณการ ค่าจริงยึดตามใบแจ้งค่าไฟ
+<!-- modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="mTitle"></h3>
+    <p id="mMsg"></p>
+    <div id="mInputWrap" hidden><label class="fl" id="mInputLab"></label><input type="number" inputmode="decimal" class="num-in big-in" id="mInput"></div>
+    <div class="mbtns">
+      <button class="btn btn-ghost" id="mCancel">ยกเลิก</button>
+      <button class="btn btn-primary" id="mOk">ตกลง</button>
+    </div>
   </div>
 </div>
 
 <script>
 (function(){
   "use strict";
-  var KEY="peaBillApp_v1";
+  var KEY="peaBillApp_v2", OLD="peaBillApp_v1";
   var $=function(s){return document.querySelector(s)};
 
   var DEFAULT_TIERS={
-    "111":[
-      {upTo:15,  rate:2.3488},
-      {upTo:25,  rate:2.9882},
-      {upTo:200, rate:3.0000},
-      {upTo:400, rate:4.1584},
-      {upTo:null,rate:4.3583}
-    ],
-    "112":[
-      {upTo:200, rate:3.0000},
-      {upTo:400, rate:4.1584},
-      {upTo:null,rate:4.3583}
-    ]
+    "111":[{upTo:15,rate:2.3488},{upTo:25,rate:2.9882},{upTo:200,rate:3.0000},{upTo:400,rate:4.1584},{upTo:null,rate:4.3583}],
+    "112":[{upTo:200,rate:3.0000},{upTo:400,rate:4.1584},{upTo:null,rate:4.3583}]
   };
   var DEFAULT_SERVICE={"111":8.19,"112":38.22};
 
   function todayStr(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
-  function daysBetween(a,b){var A=new Date(a+"T00:00:00"),B=new Date(b+"T00:00:00");return Math.round((B-A)/86400000)}
-  function addDays(s,n){var d=new Date(s+"T00:00:00");d.setDate(d.getDate()+n);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
-
+  function daysBetween(a,b){return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000)}
   var THMON=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  function fmtDate(s){if(!s)return"-";var d=new Date(s+"T00:00:00");return d.getDate()+" "+THMON[d.getMonth()]+" "+(d.getFullYear()+543-2500)}
+  function fmtDate(s){if(!s)return"-";var d=new Date(s+"T00:00:00");return d.getDate()+" "+THMON[d.getMonth()]+" "+((d.getFullYear()+543)%100)}
   function money(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})}
-  function u(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{maximumFractionDigits:1})}
+  function m0(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{maximumFractionDigits:0})}
+  function uu(n){return (isFinite(n)?n:0).toLocaleString('th-TH',{maximumFractionDigits:1})}
 
-  // ---- default seed (example) ----
-  function seed(){
-    var start=addDays(todayStr(),-9);
-    return {
-      example:true,
-      mode:"meter",
-      meterType:"112",
-      tiers:JSON.parse(JSON.stringify(DEFAULT_TIERS["112"])),
-      serviceCharge:38.22,
-      ft:0.1623,
-      vat:7,
-      cycleDays:30,
-      cycleStart:start,
-      startReading:45210,
-      readings:[
-        {date:addDays(start,4),reading:45301},
-        {date:todayStr(),reading:45398}
-      ],
-      history:[],
-      manual:{units:188,days:9}
-    };
+  function fresh(type){
+    type=type||"112";
+    return {v:2,setup:false,meterType:type,tiers:JSON.parse(JSON.stringify(DEFAULT_TIERS[type])),
+      serviceCharge:DEFAULT_SERVICE[type],ft:0.1623,vat:7,cycleDays:30,
+      cycleStart:todayStr(),startReading:0,readings:[],history:[]};
   }
-
-  var state=load();
   function load(){
     try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.tiers)return s;}catch(e){}
-    return seed();
+    try{var o=JSON.parse(localStorage.getItem(OLD));
+      if(o&&o.tiers){return {v:2,setup:!o.example,meterType:o.meterType||"112",tiers:o.tiers,
+        serviceCharge:o.serviceCharge,ft:o.ft,vat:o.vat,cycleDays:o.cycleDays||30,
+        cycleStart:o.cycleStart||todayStr(),startReading:o.example?0:(o.startReading||0),
+        readings:o.example?[]:(o.readings||[]),history:o.history||[]};}
+    }catch(e){}
+    return fresh();
   }
+  var state=load();
   function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 
-  // ---- bill math ----
+  // ---- math ----
   function computeEnergy(units,tiers){
     var prev=0,sum=0,rows=[];
     for(var i=0;i<tiers.length;i++){
       var cap=(tiers[i].upTo==null)?Infinity:tiers[i].upTo;
-      var inTier=Math.max(0,Math.min(units,cap)-prev);
-      var amt=inTier*tiers[i].rate;
-      rows.push({from:prev,to:cap,units:inTier,rate:tiers[i].rate,amount:amt,active:inTier>0});
-      sum+=amt;prev=cap;
-      if(units<=cap)break;
+      var inT=Math.max(0,Math.min(units,cap)-prev),amt=inT*tiers[i].rate;
+      rows.push({from:prev,to:cap,units:inT,rate:tiers[i].rate,amount:amt,active:inT>0});
+      sum+=amt;prev=cap;if(units<=cap)break;
     }
     return {sum:sum,rows:rows};
   }
-  function computeBill(units){
+  function bill(units){
     units=Math.max(0,units||0);
-    var e=computeEnergy(units,state.tiers);
-    var ftCharge=units*state.ft;
-    var base=e.sum+ftCharge+state.serviceCharge;
-    var vat=base*(state.vat/100);
-    return {units:units,energy:e.sum,rows:e.rows,ft:ftCharge,service:state.serviceCharge,base:base,vat:vat,total:base+vat};
+    var e=computeEnergy(units,state.tiers),ft=units*state.ft,base=e.sum+ft+state.serviceCharge,vat=base*state.vat/100;
+    return {units:units,energy:e.sum,rows:e.rows,ft:ft,service:state.serviceCharge,base:base,vat:vat,total:base+vat};
   }
-
-  // ---- derive current usage ----
+  var MIN_DAYS=2;
   function derive(){
-    if(state.mode==="units"){
-      var un=+state.manual.units||0, dd=Math.max(1,+state.manual.days||1);
-      var proj=un/dd*state.cycleDays;
-      return {unitsNow:un,days:dd,unitsProj:proj,valid:un>0};
-    }
     var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
     var last=rs.length?rs[rs.length-1]:null;
-    var curReading=last?last.reading:state.startReading;
-    var curDate=last?last.date:state.cycleStart;
-    var unitsNow=Math.max(0,curReading-state.startReading);
-    var days=Math.max(1,daysBetween(state.cycleStart,curDate)||1);
-    var proj=unitsNow/days*state.cycleDays;
-    return {unitsNow:unitsNow,days:days,unitsProj:proj,valid:unitsNow>0,curReading:curReading,curDate:curDate};
+    var cur=last?last.reading:state.startReading, cd=last?last.date:state.cycleStart;
+    var un=Math.max(0,cur-state.startReading);
+    var elapsed=Math.max(0,daysBetween(state.cycleStart,cd));
+    var canProject=(!!last && elapsed>=MIN_DAYS && un>0);
+    var proj=canProject?(un/elapsed*state.cycleDays):null;
+    return {un:un,elapsed:elapsed,proj:proj,cur:cur,cd:cd,hasReading:!!last};
   }
 
-  var bdView="fc";
+  // ---- mascot ----
+  var MOUTHS={happy:"M47 60 Q60 75 73 60",neutral:"M51 64 Q60 69 69 64",worried:"M49 68 Q60 60 71 68"};
+  function setMascot(d,nb,fb){
+    var m=$("#mascot");if(!m)return;
+    m.classList.remove("happy","neutral","worried");
+    var mood,text;
+    if(!d.hasReading){mood="neutral";text="มาจดเลขมิเตอร์วันนี้กันเถอะ เดี๋ยวเราคำนวณค่าไฟให้! 😊";}
+    else if(fb){
+      if(d.proj>400){mood="worried";text="เดือนนี้จะใช้เกิน 400 หน่วยแล้วนะ 😰 ลองตั้งแอร์ 26° เปิดพัดลมช่วย จะประหยัดขึ้นเยอะเลย";}
+      else if(d.proj>250){mood="neutral";text="กำลังพอดีๆ อยู่~ ระวังอย่าให้พุ่งเกินนี้นะ 💪";}
+      else{mood="happy";text="เยี่ยมมาก! ใช้ไฟประหยัดสุดๆ ทำต่อไปนะ 🎉";}
+    } else {mood="happy";text="บันทึกแล้ว! อีก 2–3 วันมาจดอีกที เดี๋ยวเราทายค่าทั้งเดือนให้ 🔮";}
+    m.classList.add(mood);
+    $("#mSay").textContent=text;
+    $("#mMouth").setAttribute("d",MOUTHS[mood]);
+    var ey=mood==="worried"?48:50;
+    $("#mEyeL").setAttribute("cy",ey);$("#mEyeR").setAttribute("cy",ey);
+  }
 
+  var bdView="now";
   function render(){
-    var d=derive();
-    var nowBill=computeBill(d.unitsNow);
-    var fcBill=computeBill(d.unitsProj);
+    if(!state.setup){$("#setupCard").hidden=false;$("#app").hidden=true;return;}
+    $("#setupCard").hidden=true;$("#app").hidden=false;
 
-    $("#nowCost").textContent=money(nowBill.total);
-    $("#nowMeta").textContent="ใช้ไป "+u(d.unitsNow)+" หน่วย";
-    $("#fcCost").textContent=money(fcBill.total);
-    $("#fcMeta").textContent="คาดใช้ "+u(d.unitsProj)+" หน่วย/เดือน";
+    var d=derive(), nb=bill(d.un), fb=d.proj!=null?bill(d.proj):null;
+    setMascot(d,nb,fb);
+    $("#nowCost").textContent=money(nb.total);
+    $("#nowMeta").textContent="ใช้ไป "+uu(d.un)+" หน่วย"+(d.elapsed>0?(" · "+d.elapsed+" วัน"):(d.hasReading?" · วันนี้":""));
+    if(fb){$("#fcCost").textContent=money(fb.total);$("#fcMeta").textContent="ประมาณ "+m0(d.proj)+" หน่วย/เดือน";}
+    else{$("#fcCost").textContent="—";$("#fcMeta").textContent=d.hasReading?"ต้องมีข้อมูล ≥ "+MIN_DAYS+" วัน":"รอกรอกเลขมิเตอร์";}
 
-    var pct=Math.max(0,Math.min(100,d.days/state.cycleDays*100));
+    var expl;
+    if(!d.hasReading){expl="ยังไม่ได้กรอกเลขมิเตอร์ล่าสุด — กรอกในช่องด้านล่าง แล้วค่าไฟจะขึ้นให้ทันที";}
+    else if(fb){var avgU=d.un/d.elapsed;expl="ตอนนี้ใช้ไป <b>"+uu(d.un)+" หน่วย</b> = <b>฿"+money(nb.total)+"</b> · เฉลี่ย "+uu(avgU)+" หน่วย/วัน ถ้าใช้เท่านี้ครบ "+state.cycleDays+" วัน ค่าไฟทั้งเดือนจะราว <b>฿"+money(fb.total)+"</b>";}
+    else{expl="ค่าไฟที่คุณใช้ไปแล้วตอนนี้คือ <b>฿"+money(nb.total)+"</b> ("+uu(d.un)+" หน่วย)<br>อยากรู้ค่า<b>ทั้งเดือน</b> กรอกเลขมิเตอร์อีกครั้งในอีก 2–3 วัน หรือกด “แก้วันที่เริ่มรอบ” ให้ตรงกับใบแจ้งค่าไฟ";}
+    $("#explain").innerHTML=expl;
+
+    var pct=Math.max(0,Math.min(100,d.elapsed/state.cycleDays*100));
     $("#pfill").style.width=pct+"%";
-    $("#daysElapsed").textContent=d.days;
-    $("#cycleDaysLbl").textContent=state.cycleDays;
-    $("#avgDay").textContent=money(nowBill.total/d.days);
-    $("#avgUnit").textContent=u(d.unitsNow/d.days);
+    $("#daysElapsed").textContent=d.elapsed;$("#cycleDaysLbl").textContent=state.cycleDays;
+    $("#avgDay").textContent=money(nb.total/Math.max(1,d.elapsed));
 
-    // cycle info
-    var ci=$("#cycleInfo");
-    if(state.mode==="meter"){
-      ci.innerHTML="เริ่มรอบ <b>"+fmtDate(state.cycleStart)+"</b> · เลขตั้งต้น <b class='num'>"+u(state.startReading)+"</b>";
-    }else{ci.innerHTML="";}
+    $("#cycleInfo").innerHTML="🗓️ รอบนี้เริ่มนับจากเลข <b class='num'>"+m0(state.startReading)+"</b> เมื่อ <b>"+fmtDate(state.cycleStart)+"</b>";
 
-    // breakdown
-    var bill=bdView==="fc"?fcBill:nowBill;
     var body=$("#bdBody");body.innerHTML="";
-    bill.rows.forEach(function(r){
-      var tr=document.createElement("tr");
-      if(r.active)tr.className="tier-hi";else tr.className="muted-row";
-      var range=(r.to===Infinity)?("เกิน "+r.from):((r.from)+"–"+r.to);
-      tr.innerHTML="<td>หน่วยที่ "+range+"</td><td>"+u(r.units)+"</td><td>"+r.rate.toFixed(4)+"</td><td class='amt'>"+money(r.amount)+"</td>";
-      body.appendChild(tr);
-    });
-    function addRow(cls,label,val){var tr=document.createElement("tr");tr.className=cls;tr.innerHTML="<td>"+label+"</td><td></td><td></td><td class='amt'>"+val+"</td>";body.appendChild(tr);}
-    addRow("sum","ค่าพลังงานไฟฟ้า","฿ "+money(bill.energy));
-    addRow("","ค่า Ft ("+u(bill.units)+" × "+state.ft.toFixed(4)+")","฿ "+money(bill.ft));
-    addRow("","ค่าบริการรายเดือน","฿ "+money(bill.service));
-    addRow("sum","รวมก่อน VAT","฿ "+money(bill.base));
-    addRow("","VAT "+state.vat+"%","฿ "+money(bill.vat));
-    addRow("total","รวมทั้งสิ้น","฿ "+money(bill.total));
-
-    // meter log
-    var ll=$("#logList");ll.innerHTML="";
-    if(state.mode==="units"){
-      ll.innerHTML="<div class='empty'>อยู่ในโหมดป้อนหน่วยเอง — สลับไป “จากเลขมิเตอร์” เพื่อบันทึกประวัติ</div>";
+    if(bdView==="fc"&&!fb){
+      body.innerHTML="<tr><td colspan='4' style='text-align:center;color:var(--faint);padding:18px 6px;line-height:1.6'>ยังคาดการณ์ทั้งเดือนไม่ได้<br>ต้องมีข้อมูลอย่างน้อย "+MIN_DAYS+" วัน (หรือแก้วันที่เริ่มรอบให้ตรง)</td></tr>";
     }else{
-      var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
-      // start marker
-      var s0=document.createElement("div");s0.className="logrow";
-      s0.innerHTML="<span class='d'>"+fmtDate(state.cycleStart)+"</span><span class='rd'>"+u(state.startReading)+" <small>เริ่มรอบ</small></span><span class='delta'></span><span></span>";
-      ll.appendChild(s0);
-      var prev=state.startReading,prevDate=state.cycleStart;
-      if(!rs.length){var e=document.createElement("div");e.className="empty";e.textContent="ยังไม่มีการบันทึก — ใส่เลขมิเตอร์วันนี้ด้านบน";ll.appendChild(e);}
-      rs.forEach(function(r,i){
-        var delta=r.reading-prev, dd=Math.max(1,daysBetween(prevDate,r.date)||1);
-        var row=document.createElement("div");row.className="logrow";
-        row.innerHTML="<span class='d'>"+fmtDate(r.date)+"</span>"+
-          "<span class='rd'>"+u(r.reading)+"</span>"+
-          "<span class='delta'>+<b>"+u(delta)+"</b> หน่วย<br><small style='color:var(--faint)'>"+u(delta/dd)+" /วัน</small></span>"+
-          "<button class='x' data-del='"+i+"' aria-label='ลบ'>✕</button>";
-        ll.appendChild(row);
-        prev=r.reading;prevDate=r.date;
+      var b=bdView==="fc"?fb:nb;
+      b.rows.forEach(function(r){
+        var tr=document.createElement("tr");tr.className=r.active?"tier-hi":"muted-row";
+        var range=(r.to===Infinity)?("เกิน "+r.from):(r.from+"–"+r.to);
+        tr.innerHTML="<td>หน่วยที่ "+range+"</td><td>"+uu(r.units)+"</td><td>"+r.rate.toFixed(4)+"</td><td class='amt'>"+money(r.amount)+"</td>";
+        body.appendChild(tr);
       });
+      var add=function(cls,l,v){var tr=document.createElement("tr");tr.className=cls;tr.innerHTML="<td>"+l+"</td><td></td><td></td><td class='amt'>"+v+"</td>";body.appendChild(tr);};
+      add("sum","ค่าพลังงานไฟฟ้า","฿ "+money(b.energy));
+      add("","ค่า Ft ("+uu(b.units)+" × "+state.ft.toFixed(4)+")","฿ "+money(b.ft));
+      add("","ค่าบริการรายเดือน","฿ "+money(b.service));
+      add("sum","รวมก่อน VAT","฿ "+money(b.base));
+      add("","VAT "+state.vat+"%","฿ "+money(b.vat));
+      add("total","รวมทั้งสิ้น","฿ "+money(b.total));
     }
 
-    // history
+    var ll=$("#logList");ll.innerHTML="";
+    var s0=document.createElement("div");s0.className="logrow";
+    s0.innerHTML="<span class='d'>"+fmtDate(state.cycleStart)+"</span><span class='rd'>"+m0(state.startReading)+" <small>เริ่มรอบ</small></span><span class='delta'></span><span></span>";
+    ll.appendChild(s0);
+    var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
+    if(!rs.length){var e=document.createElement("div");e.className="empty";e.textContent="ยังไม่มีการบันทึก";ll.appendChild(e);}
+    var prev=state.startReading,pd=state.cycleStart;
+    rs.forEach(function(r,i){
+      var delta=r.reading-prev, dd=Math.max(1,daysBetween(pd,r.date)||1);
+      var row=document.createElement("div");row.className="logrow";
+      row.innerHTML="<span class='d'>"+fmtDate(r.date)+"</span><span class='rd'>"+m0(r.reading)+"</span>"+
+        "<span class='delta'>+<b>"+uu(delta)+"</b> หน่วย<br><small style='color:var(--faint)'>"+uu(delta/dd)+"/วัน</small></span>"+
+        "<button class='x' data-del='"+i+"' aria-label='ลบ'>✕</button>";
+      ll.appendChild(row);prev=r.reading;pd=r.date;
+    });
+
     var hc=$("#histCard"),hl=$("#histList");
-    if(state.history&&state.history.length){
-      hc.hidden=false;hl.innerHTML="";
+    if(state.history&&state.history.length){hc.hidden=false;hl.innerHTML="";
       state.history.slice().reverse().forEach(function(h){
         var it=document.createElement("div");it.className="hist-item";
-        it.innerHTML="<span class='hd'>"+fmtDate(h.start)+" – "+fmtDate(h.end)+"</span><span class='hu num'>"+u(h.units)+" หน่วย</span><span class='ht'>฿ "+money(h.total)+"</span>";
-        hl.appendChild(it);
-      });
-    }else{hc.hidden=true;}
-
-    $("#exBanner").hidden=!state.example;
-    $("#uCycleDays").textContent=state.cycleDays;
+        it.innerHTML="<span class='hd'>"+fmtDate(h.start)+" – "+fmtDate(h.end)+"</span><span class='hu num'>"+uu(h.units)+" หน่วย</span><span class='ht'>฿ "+money(h.total)+"</span>";
+        hl.appendChild(it);});
+    }else hc.hidden=true;
   }
 
-  // ---- settings render ----
   function renderSettings(){
     $("#meterType").value=state.meterType;
-    $("#ftRate").value=state.ft;
-    $("#serviceCharge").value=state.serviceCharge;
-    $("#vatRate").value=state.vat;
-    $("#cycleDays").value=state.cycleDays;
-    $("#ftPeriodTxt").innerHTML="ค่าเริ่มต้น = <b>0.1623</b> บาท/หน่วย สำหรับงวด <b>ก.ย.–ธ.ค. 2569</b> · งวดถัดไปประกาศประมาณ ธ.ค. 2569";
+    $("#ftRate").value=state.ft;$("#serviceCharge").value=state.serviceCharge;
+    $("#vatRate").value=state.vat;$("#cycleDays").value=state.cycleDays;
+    $("#ftPeriodTxt").innerHTML="ค่าเริ่มต้น <b>0.1623</b> บาท/หน่วย งวด <b>ก.ย.–ธ.ค. 2569</b> · งวดหน้าประกาศราว ธ.ค. 2569";
     var te=$("#tierEdit");te.innerHTML="";
     state.tiers.forEach(function(t,i){
       var prev=i===0?0:(state.tiers[i-1].upTo||0);
+      var lbl=(t.upTo==null)?("เกิน "+prev):(prev+"–"+t.upTo);
       var row=document.createElement("div");row.className="tier-edit";
-      var lbl=(t.upTo==null)?("เกิน "+prev):((prev)+"–"+t.upTo);
-      row.innerHTML="<span class='tlab'>หน่วยที่ "+lbl+"</span>"+
-        "<input type='number' step='0.0001' class='num-in' data-tier='"+i+"' value='"+t.rate+"'>"+
-        "<span class='tlab'>฿/หน่วย</span>";
+      row.innerHTML="<span class='tlab'>หน่วย "+lbl+"</span><input type='number' step='0.0001' class='num-in' data-tier='"+i+"' value='"+t.rate+"'><span class='tlab'>฿</span>";
       te.appendChild(row);
     });
     te.querySelectorAll("[data-tier]").forEach(function(inp){
-      inp.addEventListener("change",function(){state.tiers[+inp.dataset.tier].rate=parseFloat(inp.value)||0;state.example=false;save();render();});
+      inp.addEventListener("change",function(){state.tiers[+inp.dataset.tier].rate=parseFloat(inp.value)||0;save();render();});
     });
   }
 
-  // ---- events ----
-  $("#modeSeg").addEventListener("click",function(e){
-    var b=e.target.closest("button");if(!b)return;
-    state.mode=b.dataset.mode;
-    $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
-    $("#meterMode").hidden=state.mode!=="meter";
-    $("#unitsMode").hidden=state.mode!=="units";
-    $("#modeSubtitle").textContent=state.mode==="units"?"ประมาณเร็ว":"";
-    save();render();
+  // ---- modal ----
+  function modal(opts){
+    return new Promise(function(res){
+      $("#mTitle").textContent=opts.title||"";
+      $("#mMsg").innerHTML=opts.msg||"";
+      var iw=$("#mInputWrap");
+      if(opts.input){iw.hidden=false;$("#mInputLab").textContent=opts.input.label||"";var mi=$("#mInput");mi.value=opts.input.value||"";}
+      else iw.hidden=true;
+      $("#mOk").textContent=opts.ok||"ตกลง";$("#mCancel").textContent=opts.cancel||"ยกเลิก";
+      $("#mCancel").hidden=!!opts.noCancel;
+      var ov=$("#overlay");ov.classList.add("show");
+      if(opts.input)setTimeout(function(){$("#mInput").focus()},50);
+      function done(val){ov.classList.remove("show");$("#mOk").onclick=null;$("#mCancel").onclick=null;res(val);}
+      $("#mOk").onclick=function(){done(opts.input?($("#mInput").value):true)};
+      $("#mCancel").onclick=function(){done(null)};
+    });
+  }
+  function feedback(el,type,msg){el.className="feedback show "+type;el.innerHTML=(type==="ok"?"✓ ":"⚠️ ")+msg;
+    if(type==="ok")setTimeout(function(){el.classList.remove("show")},2600);}
+
+  // ---- setup events ----
+  var setupType="112";
+  $("#setupChoice").addEventListener("click",function(e){
+    var b=e.target.closest("button");if(!b)return;setupType=b.dataset.t;
+    this.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
+  });
+  $("#setupChoice").querySelector('[data-t="112"]').classList.add("on");
+  $("#setupDone").addEventListener("click",function(){
+    var v=parseFloat($("#setupReading").value);
+    if(!isFinite(v)||v<0){feedback($("#setupErr"),"err","กรุณาใส่เลขมิเตอร์ตอนเริ่มรอบก่อน");$("#setupReading").focus();return;}
+    state=fresh(setupType);state.setup=true;state.startReading=v;state.cycleStart=$("#setupDate").value||todayStr();
+    save();renderSettings();render();window.scrollTo(0,0);
   });
 
-  $("#bdSeg").addEventListener("click",function(e){
-    var b=e.target.closest("button");if(!b)return;
-    bdView=b.dataset.bd;
-    $("#bdSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
-    render();
-  });
-
+  // ---- app events ----
   $("#addReading").addEventListener("click",function(){
-    var v=parseFloat($("#curReading").value);
-    var dt=$("#curDate").value||todayStr();
-    if(!isFinite(v)){$("#curReading").focus();return;}
-    if(v<state.startReading){alert("เลขมิเตอร์น้อยกว่าเลขตั้งต้นของรอบ ("+u(state.startReading)+")\nถ้าขึ้นรอบใหม่แล้ว ให้กด “เริ่มรอบใหม่”");return;}
-    state.readings.push({date:dt,reading:v});
-    state.example=false;
-    $("#curReading").value="";
-    save();render();
+    var v=parseFloat($("#curReading").value), dt=$("#curDate").value||todayStr();
+    if(!isFinite(v)){feedback($("#addFb"),"err","ใส่เลขมิเตอร์ก่อนนะ");$("#curReading").focus();return;}
+    if(v<state.startReading){feedback($("#addFb"),"err","เลขนี้น้อยกว่าเลขตั้งต้นของรอบ ("+m0(state.startReading)+") ถ้าขึ้นบิลรอบใหม่ ให้กด “เริ่มนับใหม่”");return;}
+    state.readings.push({date:dt,reading:v});$("#curReading").value="";save();render();
+    feedback($("#addFb"),"ok","บันทึกแล้ว");
   });
-
   $("#logList").addEventListener("click",function(e){
     var b=e.target.closest("[data-del]");if(!b)return;
-    var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1});
-    var target=rs[+b.dataset.del];
-    state.readings=state.readings.filter(function(r){return!(r.date===target.date&&r.reading===target.reading)});
-    save();render();
+    var rs=state.readings.slice().sort(function(a,b){return a.date<b.date?-1:1}),t=rs[+b.dataset.del];
+    state.readings=state.readings.filter(function(r){return!(r.date===t.date&&r.reading===t.reading)});save();render();
   });
-
   $("#newCycle").addEventListener("click",function(){
     var d=derive();
-    if(state.mode==="meter"&&d.unitsNow>0){
-      var bill=computeBill(d.unitsNow);
-      state.history=state.history||[];
-      state.history.push({start:state.cycleStart,end:d.curDate,units:d.unitsNow,total:bill.total});
-      var last=d.curReading;
-      var nd=prompt("เริ่มรอบบิลใหม่\nใส่เลขมิเตอร์ตั้งต้นของรอบใหม่:",last);
-      if(nd===null)return;
-      state.startReading=parseFloat(nd)||last;
-      state.cycleStart=todayStr();
-      state.readings=[];
-    }else{
-      var nd2=prompt("เริ่มรอบใหม่\nใส่เลขมิเตอร์ตั้งต้นวันนี้:","");
-      if(nd2===null)return;
-      state.startReading=parseFloat(nd2)||0;
-      state.cycleStart=todayStr();
-      state.readings=[];
-      state.mode="meter";
-      $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x.dataset.mode==="meter")});
-      $("#meterMode").hidden=false;$("#unitsMode").hidden=true;
-    }
-    state.example=false;
-    save();render();
+    modal({title:"เริ่มนับรอบใหม่",msg:"ใช้เมื่อขึ้นบิลรอบใหม่แล้ว ระบบจะเก็บยอดรอบนี้ไว้ในประวัติ แล้วเริ่มนับใหม่<br><br>ใส่เลขมิเตอร์ตั้งต้นของรอบใหม่:",
+      input:{label:"เลขมิเตอร์ตอนนี้",value:d.cur||""},ok:"เริ่มรอบใหม่"}).then(function(val){
+      if(val===null)return;
+      var nr=parseFloat(val);if(!isFinite(nr))return;
+      if(d.hasReading&&d.un>0){state.history=state.history||[];state.history.push({start:state.cycleStart,end:d.cd,units:d.un,total:bill(d.un).total});}
+      state.startReading=nr;state.cycleStart=todayStr();state.readings=[];save();render();
+    });
   });
 
-  // units mode inputs
-  $("#uUnits").addEventListener("input",function(){state.manual.units=parseFloat(this.value)||0;state.example=false;save();render();});
-  $("#uDays").addEventListener("input",function(){state.manual.days=parseFloat(this.value)||0;state.example=false;save();render();});
+  // edit cycle
+  $("#editCycleBtn").addEventListener("click",function(){
+    var box=$("#editCycleBox");
+    $("#editStartReading").value=state.startReading;
+    $("#editStartDate").value=state.cycleStart;
+    box.hidden=!box.hidden;
+  });
+  $("#editCycleCancel").addEventListener("click",function(){$("#editCycleBox").hidden=true;});
+  $("#editCycleSave").addEventListener("click",function(){
+    var v=parseFloat($("#editStartReading").value), dt=$("#editStartDate").value||state.cycleStart;
+    if(isFinite(v))state.startReading=v;
+    state.cycleStart=dt;
+    $("#editCycleBox").hidden=true;save();render();feedback($("#addFb"),"ok","แก้ข้อมูลรอบบิลแล้ว");
+  });
 
-  // settings inputs
+  // quick calc
+  $("#qCalc").addEventListener("click",function(){
+    var un=parseFloat($("#qUnits").value);
+    if(!isFinite(un)){$("#qRes").innerHTML="<span style='color:var(--danger)'>ใส่จำนวนหน่วยก่อน</span>";return;}
+    var b=bill(un);
+    $("#qRes").innerHTML="ใช้ "+uu(un)+" หน่วย ≈ <b>฿"+money(b.total)+"</b> <span style='font-size:.82rem'>(รวม Ft + ค่าบริการ + VAT)</span>";
+  });
+
+  // AC estimate
+  $("#acCalc").addEventListener("click",function(){
+    var btu=parseFloat($("#acBtu").value), hr=parseFloat($("#acHr").value), typ=$("#acType").value;
+    if(!isFinite(btu)||!isFinite(hr)||btu<=0||hr<=0){$("#acRes").innerHTML="<span style='color:var(--danger)'>ใส่ขนาดแอร์และชั่วโมงก่อน</span>";return;}
+    // ประมาณกำลังไฟเฉลี่ยขณะทำงาน (kWh/ชม.) จาก BTU
+    var eer=typ==="inv"?12.5:10.5;           // ประสิทธิภาพ (BTU/W)
+    var duty=typ==="inv"?0.62:0.75;          // สัดส่วนเวลาที่คอมทำงานจริง
+    var kwhPerHr=(btu/eer)/1000*duty;
+    var perDay=kwhPerHr*hr, perMonth=perDay*30;
+    // ต้นทุนต่อหน่วยส่วนเพิ่ม (ประมาณจากขั้นบนสุดของเรทปัจจุบัน)
+    var topRate=state.tiers[state.tiers.length-1].rate;
+    var costUnit=(topRate+state.ft)*(1+state.vat/100);
+    var perMonthCost=perMonth*costUnit;
+    $("#acRes").innerHTML="แอร์ "+m0(btu)+" BTU เปิด "+uu(hr)+" ชม./วัน<br>"+
+      "≈ <b>"+uu(perDay)+"</b> หน่วย/วัน · <b>"+m0(perMonth)+"</b> หน่วย/เดือน<br>"+
+      "คิดเป็นเงินราว <b>฿"+money(perMonthCost)+"/เดือน</b> <span style='font-size:.8rem'>(ที่เรตส่วนเพิ่ม ~"+money(costUnit)+" บาท/หน่วย)</span><br>"+
+      "<span style='font-size:.82rem;color:var(--faint)'>ตั้ง 26° + พัดลม และล้างแอร์ ช่วยลดได้ ~20–30%</span>";
+  });
+
+  // settings
   $("#meterType").addEventListener("change",function(){
-    state.meterType=this.value;
-    state.tiers=JSON.parse(JSON.stringify(DEFAULT_TIERS[this.value]));
-    state.serviceCharge=DEFAULT_SERVICE[this.value];
-    state.example=false;save();renderSettings();render();
+    state.meterType=this.value;state.tiers=JSON.parse(JSON.stringify(DEFAULT_TIERS[this.value]));state.serviceCharge=DEFAULT_SERVICE[this.value];
+    save();renderSettings();render();
   });
-  $("#ftRate").addEventListener("change",function(){state.ft=parseFloat(this.value)||0;state.example=false;save();render();});
-  $("#serviceCharge").addEventListener("change",function(){state.serviceCharge=parseFloat(this.value)||0;state.example=false;save();render();});
-  $("#vatRate").addEventListener("change",function(){state.vat=parseFloat(this.value)||0;state.example=false;save();render();});
-  $("#cycleDays").addEventListener("change",function(){state.cycleDays=parseInt(this.value)||30;state.example=false;save();render();});
-
-  $("#clearEx").addEventListener("click",function(){
-    var mt=state.meterType;
-    state=seed();state.example=false;
-    state.readings=[];state.history=[];state.manual={units:0,days:0};
-    state.cycleStart=todayStr();state.startReading=0;
-    save();initFields();render();
-  });
+  $("#ftRate").addEventListener("change",function(){state.ft=parseFloat(this.value)||0;save();render();});
+  $("#serviceCharge").addEventListener("change",function(){state.serviceCharge=parseFloat(this.value)||0;save();render();});
+  $("#vatRate").addEventListener("change",function(){state.vat=parseFloat(this.value)||0;save();render();});
+  $("#cycleDays").addEventListener("change",function(){state.cycleDays=parseInt(this.value)||30;save();render();});
   $("#resetAll").addEventListener("click",function(){
-    if(!confirm("ล้างข้อมูลทั้งหมดและเริ่มต้นใหม่?"))return;
-    try{localStorage.removeItem(KEY)}catch(e){}
-    state=seed();state.example=false;
-    state.readings=[];state.history=[];state.manual={units:0,days:0};
-    state.cycleStart=todayStr();state.startReading=0;
-    save();initFields();render();$("#settings").open=false;
+    modal({title:"ล้างข้อมูลทั้งหมด?",msg:"ประวัติเลขมิเตอร์และรอบบิลทั้งหมดจะถูกลบ แล้วกลับไปหน้าตั้งค่าครั้งแรก",ok:"ล้างเลย",cancel:"ไม่"}).then(function(v){
+      if(!v)return;try{localStorage.removeItem(KEY);localStorage.removeItem(OLD);}catch(e){}
+      state=fresh();save();$("#settings").open=false;renderSettings();render();window.scrollTo(0,0);
+    });
   });
 
   // theme
-  var tb=$("#themeBtn");
-  function curTheme(){return document.documentElement.getAttribute("data-theme")}
-  tb.addEventListener("click",function(){
-    var t=curTheme();
+  $("#themeBtn").addEventListener("click",function(){
+    var t=document.documentElement.getAttribute("data-theme");
     var next=t==="dark"?"light":(t==="light"?"dark":(matchMedia("(prefers-color-scheme:dark)").matches?"light":"dark"));
-    document.documentElement.setAttribute("data-theme",next);
-    try{localStorage.setItem("peaTheme",next)}catch(e){}
+    document.documentElement.setAttribute("data-theme",next);try{localStorage.setItem("peaTheme",next)}catch(e){}
   });
-  try{var st=localStorage.getItem("peaTheme");if(st)document.documentElement.setAttribute("data-theme",st);}catch(e){}
+  try{var th=localStorage.getItem("peaTheme");if(th)document.documentElement.setAttribute("data-theme",th);}catch(e){}
 
-  function initFields(){
-    $("#curDate").value=todayStr();
-    $("#uUnits").value=state.manual&&state.manual.units?state.manual.units:"";
-    $("#uDays").value=state.manual&&state.manual.days?state.manual.days:"";
-    $("#modeSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x.dataset.mode===state.mode)});
-    $("#meterMode").hidden=state.mode!=="meter";
-    $("#unitsMode").hidden=state.mode!=="units";
-    renderSettings();
-  }
-
-  initFields();
+  // init
+  $("#curDate").value=todayStr();
+  $("#setupDate").value=todayStr();
+  renderSettings();
   render();
 })();
 </script>
